@@ -6,7 +6,7 @@ The installation of KubeVirt related operators is managed by a 'meta operator'
 called the [HyperConverged Cluster Operator](https://github.com/kubevirt/hyperconverged-cluster-operator) (HCO).
 Deploying with the 'meta operator' will launch operators for KubeVirt,
 Containerized Data Imported (CDI), Cluster Network Addons (CNA),
-Common templates (SSP), KubeVirt Web UI, and Node Maintenance Operator (NMO).
+Common templates (SSP), and Node Maintenance Operator (NMO).
 
 #### Deploy the HCO through Marketplace
 The HyperConverged Cluster Operator is listed in the Community Marketplace,
