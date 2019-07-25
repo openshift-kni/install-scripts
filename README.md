@@ -26,5 +26,5 @@ $ kubectl wait pod $(kubectl get pods -n kubevirt-hyperconverged | grep hypercon
 
 Create the HCO's CR launching kubevirt and component operators:
 ```
-$ kubectl create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/deploy/converged/crds/hco.cr.yaml
+$ kubectl create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/deploy/hco.cr.yaml
 ```
