@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rook-config-override
+  namespace: openshift-storage
+data:
+  config: |
+    [global]
+    public network = 1.1.1.0/24 # TODO update to whatever the public network is
+    cluster network = 2.2.2.0/24 # TODO update to whatever the VLAN subnet is

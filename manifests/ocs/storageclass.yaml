@@ -1,0 +1,22 @@
+---
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: openshift-storage
+  namespace: openshift-storage
+spec:
+  replicated:
+    size: 3
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+  name: rook-ceph-block
+provisioner: ceph.rook.io/block
+parameters:
+  blockPool: openshift-storage
+  clusterNamespace: openshift-storage
+  fstype: xfs
+
