@@ -1,0 +1,67 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: prometheus
+  namespace: openshift-storage
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.ceph.rook.io/aggregate-to-prometheus: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: prometheus-rules
+  namespace: openshift-storage
+  labels:
+    rbac.ceph.rook.io/aggregate-to-prometheus: "true"
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+  namespace: openshift-storage
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus-k8s
+  namespace: openshift-monitoring
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: rook-ceph-mgr
+  namespace: openshift-storage
+  labels:
+    team: rook
+spec:
+  namespaceSelector:
+    matchNames:
+      - openshift-storage
+  selector:
+    matchLabels:
+      app: rook-ceph-mgr
+      rook_cluster: openshift-storage
+  endpoints:
+  - port: http-metrics
+    path: /metrics
+    interval: 5s
