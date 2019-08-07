@@ -57,6 +57,11 @@ while [ "x" == "x$(oc get pods -l kubevirt.io=virt-api -n ${OPERATORS_NAMESPACE}
 done
 
 oc wait --for condition=ready pod -l kubevirt.io=virt-api -n ${OPERATORS_NAMESPACE} --timeout=2400s
+
+while [ "x" == "x$(oc get pods -l kubevirt.io=virt-controller -n ${OPERATORS_NAMESPACE} 2> /dev/null)" ]; do
+    sleep 10
+done
+
 oc wait --for condition=ready pod -l kubevirt.io=virt-controller -n ${OPERATORS_NAMESPACE} --timeout=2400s
 
 while [ "x" == "x$(oc get pods -l kubevirt.io=virt-handler -n ${OPERATORS_NAMESPACE} 2> /dev/null)" ]; do
