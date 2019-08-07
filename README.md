@@ -1,6 +1,31 @@
 # install-scripts
 Installation scripts for OpenShift KNI clusters
 
+## Provisioning Host Setup
+
+The provisioning host must be a RHEL-8 machine.
+
+Make a copy of `config_example.sh` and set the required variables in
+there.
+
+To install some required packages and the `oc` client:
+
+```sh
+make requirements
+```
+
+Note:
+
+1. This ensures that a recent 4.2 build of `oc` is installed. The
+   minimum required version is hardcoded in the script.
+
+To configure libvirt, and prepare the `provisioning` and `baremetal`
+bridges:
+
+```sh
+make configure
+```
+
 ## Continer Native Virtualization (CNV)
 The installation of CNV related operators is managed by a *meta operator*
 called the [HyperConverged Cluster Operator](https://github.com/kubevirt/hyperconverged-cluster-operator) (HCO).
