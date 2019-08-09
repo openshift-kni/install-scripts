@@ -15,7 +15,8 @@ sudo yum -y update
 sudo yum -y install \
   curl \
   nmap \
-  jq
+  jq \
+  wget
 
 sudo yum -y install \
   libvirt \
