@@ -27,6 +27,9 @@ EOF
     virsh pool-autostart default
 fi
 
+# FIXME: is this needed?
+ZONE="\nZONE=libvirt"
+
 # Create the provisioning bridge
 if ! virsh net-uuid provisioning > /dev/null 2>&1 ; then
     virsh net-define /dev/stdin <<EOF
@@ -44,7 +47,7 @@ fi
 # dnsmasq being run, we don't want that as we have our own dnsmasq, so set
 # the IP address here
 if [ ! -e /etc/sysconfig/network-scripts/ifcfg-provisioning ] ; then
-    echo -e "DEVICE=provisioning\nTYPE=Bridge\nONBOOT=yes\nNM_CONTROLLED=no\nBOOTPROTO=static\nIPADDR=172.22.0.1\nNETMASK=255.255.255.0\nZONE=libvirt" | sudo dd of=/etc/sysconfig/network-scripts/ifcfg-provisioning
+    echo -e "DEVICE=provisioning\nTYPE=Bridge\nONBOOT=yes\nNM_CONTROLLED=no\nBOOTPROTO=static\nIPADDR=172.22.0.1\nNETMASK=255.255.255.0${ZONE}" | sudo dd of=/etc/sysconfig/network-scripts/ifcfg-provisioning
 fi
 sudo ifdown provisioning || true
 sudo ifup provisioning
@@ -71,7 +74,7 @@ EOF
 fi
 
 if [ ! -e /etc/sysconfig/network-scripts/ifcfg-baremetal ] ; then
-    echo -e "DEVICE=baremetal\nTYPE=Bridge\nONBOOT=yes\nNM_CONTROLLED=no\nZONE=libvirt" | sudo dd of=/etc/sysconfig/network-scripts/ifcfg-baremetal
+    echo -e "DEVICE=baremetal\nTYPE=Bridge\nONBOOT=yes\nNM_CONTROLLED=no${ZONE}" | sudo dd of=/etc/sysconfig/network-scripts/ifcfg-baremetal
 fi
 sudo ifdown baremetal || true
 sudo ifup baremetal
