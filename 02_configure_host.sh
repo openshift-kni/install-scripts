@@ -60,7 +60,6 @@ if [ "$PRO_IF" ]; then
 fi
 
 # Create the baremetal bridge
-# FIXME: is DHCP and DNS configuration needed?
 if ! virsh net-uuid baremetal > /dev/null 2>&1 ; then
     virsh net-define /dev/stdin <<EOF
 <network>
