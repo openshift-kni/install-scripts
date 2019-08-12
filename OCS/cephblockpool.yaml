@@ -1,0 +1,8 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: openshift-storage
+  namespace: openshift-storage
+spec:
+  replicated:
+    size: 3
