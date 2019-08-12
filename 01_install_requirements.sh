@@ -18,6 +18,10 @@ sudo yum -y install \
   jq \
   wget
 
+# FIXME: using deprecated network-scripts needed for NM_CONTROLLED=no
+# interfaces on RHEL-8
+sudo yum install -y network-scripts
+
 sudo yum -y install \
   libvirt \
   libvirt-daemon-kvm
