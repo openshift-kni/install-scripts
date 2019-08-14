@@ -2,7 +2,6 @@
 
 OPERATORS_NAMESPACE="openshift-operators"
 LINUX_BRIDGE_NAMESPACE="linux-bridge"
-KWEB_UI_NAMESPACE="kubevirt-web-ui"
 
 set -e
 
@@ -30,11 +29,9 @@ done
 oc wait --for condition=ready pod -l name=hyperconverged-cluster-operator -n ${OPERATORS_NAMESPACE} --timeout=2400s
 oc wait --for condition=ready pod -l kubevirt.io=virt-operator -n ${OPERATORS_NAMESPACE} --timeout=2400s
 oc wait --for condition=ready pod -l name=cdi-operator -n ${OPERATORS_NAMESPACE} --timeout=2400s
-oc wait --for condition=ready pod -l name=kubevirt-web-ui-operator -n ${OPERATORS_NAMESPACE} --timeout=2400s
 oc wait --for condition=ready pod -l name=cluster-network-addons-operator -n ${OPERATORS_NAMESPACE} --timeout=2400s
 oc wait --for condition=ready pod -l name=kubevirt-ssp-operator -n ${OPERATORS_NAMESPACE} --timeout=2400s
 oc wait --for condition=ready pod -l name=node-maintenance-operator -n ${OPERATORS_NAMESPACE} --timeout=2400s
-
 
 echo "Launching CNV..."
 cat <<EOF | oc create -f -
@@ -83,17 +80,10 @@ done
 oc wait --for condition=ready pod -l app=bridge-marker -n ${LINUX_BRIDGE_NAMESPACE} --timeout=2400s
 oc wait --for condition=ready pod -l app=cni-plugins -n ${LINUX_BRIDGE_NAMESPACE} --timeout=2400s
 
-while [ "x" == "x$(oc get pods -l app=kubevirt-web-ui -n ${KWEB_UI_NAMESPACE} 2> /dev/null)" ]; do
-    sleep 10
-done
-
-oc wait --for condition=ready pod -l app=kubevirt-web-ui -n ${KWEB_UI_NAMESPACE} --timeout=2400s
-
 while [ "x" == "x$(oc get pods -l app=kubevirt-node-labeller -n ${OPERATORS_NAMESPACE} 2> /dev/null)" ]; do
     sleep 10
 done
 
 oc wait --for condition=ready pod -l app=kubevirt-node-labeller -n ${OPERATORS_NAMESPACE} --timeout=2400s
-
 
 echo "Done installing CNV!"
