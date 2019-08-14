@@ -7,5 +7,5 @@ metadata:
 data:
   config: |
     [global]
-    public network = 1.1.1.0/24 # TODO update to whatever the public network is
-    cluster network = 2.2.2.0/24 # TODO update to whatever the VLAN subnet is
+    public network = ${public_network}
+    cluster network = ${cluster_network}

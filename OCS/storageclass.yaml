@@ -4,15 +4,14 @@ metadata:
   name: csi-rbd
   annotations:
     storageclass.kubernetes.io/is-default-class: "true"
-provisioner: rbd.csi.ceph.com
+provisioner: openshift-storage.rbd.csi.ceph.com
 parameters:
   clusterID: openshift-storage
   pool: openshift-storage
   imageFormat: "2"
   imageFeatures: layering
-  csi.storage.k8s.io/provisioner-secret-name: csi-rbd-secret
-  csi.storage.k8s.io/provisioner-secret-namespace: default
-  csi.storage.k8s.io/node-stage-secret-name: csi-rbd-secret
-  csi.storage.k8s.io/node-stage-secret-namespace: default
-  adminid: admin
+  csi.storage.k8s.io/provisioner-secret-name: rook-ceph-csi
+  csi.storage.k8s.io/provisioner-secret-namespace: openshift-storage
+  csi.storage.k8s.io/node-stage-secret-name: rook-ceph-csi
+  csi.storage.k8s.io/node-stage-secret-namespace: openshift-storage
 reclaimPolicy: Delete
