@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-source logging.sh
+source ../common/logging.sh
 
 # FIXME: include checks from common.sh, see https://github.com/openshift-metal3/dev-scripts/issues/727
 

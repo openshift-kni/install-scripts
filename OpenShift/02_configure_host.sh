@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -xe
 
-source logging.sh
+source ../common/logging.sh
 source common.sh
 
 # FIXME: we don't generate a user SSH key - check for one?

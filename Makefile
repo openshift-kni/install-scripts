@@ -1,18 +1,17 @@
-.PHONY: default all requirements configure
-default: requirements configure
+.PHONY: default all  OpenShift OCS CNV
+default: OpenShift bell
 
-all: default
+all: OpenShift OCS CNV bell
 
-requirements:
-	./01_install_requirements.sh
+OpenShift:
+	pushd Openshift; make; popd
 
-configure:
-	./02_configure_host.sh
+OCS: OpenShift
+	pushd OCS; ./customize-ocs.sh; popd
 
-clean: host_cleanup
+CNV: OpenShift
+	pushd CNV; ./deploy-cnv.sh; popd
 
-host_cleanup:
-	./host_cleanup.sh
 
 bell:
 	@echo "Done!" $$'\a'
