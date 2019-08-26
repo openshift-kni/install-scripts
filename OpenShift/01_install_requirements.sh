@@ -14,6 +14,7 @@ sudo yum -y update
 # Install required packages
 sudo yum -y install \
   curl \
+  genisoimage \
   nmap \
   jq \
   wget
