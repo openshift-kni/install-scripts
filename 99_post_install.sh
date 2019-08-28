@@ -21,8 +21,8 @@ create_bridge(){
   fi
   if [ "$interface" != "$bridge" ] ; then
     echo "Using interface $interface"
-    export interface_content=$(envsubst < ${IFCFG_INTERFACE} | base64)
-    export bridge_content=$(envsubst < ${IFCFG_BRIDGE} | base64)
+    export interface_content=$(envsubst < ${IFCFG_INTERFACE} | base64 -w0)
+    export bridge_content=$(envsubst < ${IFCFG_BRIDGE} | base64 -w0)
     envsubst < assets/post-install/99-brext-master.yaml.template > assets/post-install/99-brext-master.yaml
     echo "Done creating bridge definition"
   else
