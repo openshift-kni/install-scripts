@@ -7,10 +7,10 @@ OpenShift:
 	pushd OpenShift; make; popd
 
 OCS: OpenShift
-	pushd OCS; ./customize-ocs.sh; popd
+	pushd OCS; make; popd
 
 CNV: OpenShift
-	pushd CNV; ./deploy-cnv.sh; popd
+	pushd CNV; make; popd
 
 bell:
 	@echo "Done!" $$'\a'
