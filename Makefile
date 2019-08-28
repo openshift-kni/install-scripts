@@ -4,7 +4,7 @@ default: OpenShift bell
 all: OpenShift OCS CNV bell
 
 OpenShift:
-	pushd Openshift; make; popd
+	pushd OpenShift; make; popd
 
 OCS: OpenShift
 	pushd OCS; ./customize-ocs.sh; popd
