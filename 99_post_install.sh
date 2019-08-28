@@ -18,15 +18,16 @@ create_bridge(){
   if [ "$interface" == "" ] ; then
     echo "Issue detecting interface to use! Leaving..."
     exit 1
-    if [ "$interface" != "$bridge" ] ; then
-      echo "Using interface $interface"
-      export interface_content=$(envsubst < ${IFCFG_INTERFACE} | base64)
-      export bridge_content=$(envsubst < ${IFCFG_BRIDGE} | base64)
-      envsubst < assets/post-install/99-brext-master.yaml.template > assets/post-install/99-brext-master.yaml
-      echo "Done creating bridge definition"
-    else
-      echo "Bridge already there!"
-    fi
+  fi
+  if [ "$interface" != "$bridge" ] ; then
+    echo "Using interface $interface"
+    export interface_content=$(envsubst < ${IFCFG_INTERFACE} | base64)
+    export bridge_content=$(envsubst < ${IFCFG_BRIDGE} | base64)
+    envsubst < assets/post-install/99-brext-master.yaml.template > assets/post-install/99-brext-master.yaml
+    echo "Done creating bridge definition"
+  else
+    echo "Bridge already there!"
+  fi
 }
 
 apply_mc(){
