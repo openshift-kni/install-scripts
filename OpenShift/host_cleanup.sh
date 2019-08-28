@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -x
 
-source logging.sh
+source ../common/logging.sh
 source common.sh
 
 if virsh net-uuid baremetal > /dev/null 2>&1 ; then

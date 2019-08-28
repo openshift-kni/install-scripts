@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 
-source logging.sh
+source ../common/logging.sh
 source common.sh
 
 export OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE="${OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE:-registry.svc.ci.openshift.org/ocp/release:4.2}"
