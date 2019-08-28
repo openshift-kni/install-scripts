@@ -1,5 +1,0 @@
-DEVICE=${interface}
-BRIDGE=${bridge}
-ONBOOT=yes
-NM_CONTROLLED=yes
-BOOTPROTO=none
