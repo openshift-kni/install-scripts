@@ -16,7 +16,7 @@ KNI clusters consist of:
   [KubeVirt](https://kubevirt.io/) and using the [Hyperconverged
   Cluster Operator
   (HCO)](https://github.com/kubevirt/hyperconverged-cluster-operator).
-* 4x Dell PowerEdge R640 nodes, each with 2x Mellanox NICs, and 2x
+* 4x Dell PowerEdge R640 nodes, each with 2x Mellanox 25G NICs, and 2x
   Mellanox ethernet switches, all in a 12U rack. 1 node is used as a
   "provisioning host", while the other 3 nodes are OpenShift control
   plane machines.
@@ -29,17 +29,15 @@ will need to support both published releases and [pre-release versions
 (#12)](https://github.com/openshift-kni/install-scripts/issues/12) of
 each of these.
 
-The scripts will:
+To ease installtion, a [prepared ISO](https://github.com/openshift-kni/install-scripts/issues/20)
+can be used to install the "provioning host".  Using the ISO will address
+the following, else optional scripts can be executed on a RHEL8 host. 
 
 1. [Creates an admin user
    (#21)](https://github.com/openshift-kni/install-scripts/issues/21)
    with passwordless sudo on the provisioning host.
 1. Ensure the provisioning host has all [required software
-   installed](https://github.com/openshift-kni/install-scripts/blob/master/01_install_requirements.sh). This
-   script will also be used to [prepare an ISO image
-   (#20)](https://github.com/openshift-kni/install-scripts/issues/20)
-   to speed up this part of the installation process.
-1. [Validate any environment requirements
+   installed](https://github.com/openshift-kni/install-scripts/blob/master/01_install_requirements.sh). 
    (#22)](https://github.com/openshift-kni/install-scripts/issues/22) -
    the [bare metal IPI network
    requirements](https://github.com/openshift/installer/blob/master/docs/user/metal/install_ipi.md#network-requirements)
@@ -49,6 +47,15 @@ The scripts will:
    that are required for the OpenShift installer - for example,
    creating the `default` libvirt storage pool and the `baremetal` and
    `provisioning` bridges.
+
+
+Once the aboave has been completed, additional scripts will preformteh following:
+
+1. [Validate any environment requirements
+(#22)](https://github.com/openshift-kni/install-scripts/issues/22) -
+   the [bare metal IPI network
+   requirements](https://github.com/openshift/installer/blob/master/docs/user/metal/install_ipi.md#network-requirements)
+   are a good example of environment requirements.
 1. [Prepare the node information
    (#19)](https://github.com/openshift-kni/install-scripts/issues/19)
    required for the [bare metal IPI
@@ -58,7 +65,7 @@ The scripts will:
 1. Complete some post-install configuration - including [machine/node
    linkage
    (#14)](https://github.com/openshift-kni/install-scripts/issues/14),
-   and [configuring a storage VLAN on the `provisioning` interface on
+   and [configuring a storage VLAN on the `Internal` interface on
    the OpenShift nodes
    (#4)](https://github.com/openshift-kni/install-scripts/issues/4).
 1. [Deploy OCS
@@ -76,8 +83,12 @@ The scripts will:
 1. Temporarily install Ripsaw, carry out some performance tests, and
    capture the results.
 
+
+
+
 The following environment-specific information will be required for
-each installation:
+each installation.  Most of these items will be discovered in a properly
+configured cluster:
 
 1. A pull secret - used to access OpenShift content - and an SSH key
    that will be used to authenticate SSH access to the control plane
@@ -98,25 +109,20 @@ each installation:
 
 The provisioning host must be a RHEL-8 machine.
 
-Make a copy of `config_example.sh` and set the required variables in
+### For a host not installed usinghte ISO:
+In the OpenShift subdirectory, Make a copy of `config_example.sh` and set the required variables in
 there.
 
-To install some required packages and the `oc` client:
+To install some required packages configure libvirt, and prepare the 
+`provisioning` and `baremetal` bridges, from the top directory:
 
 ```sh
-make requirements
+make prep
 ```
 
-Note:
-
-1. This ensures that a recent 4.2 build of `oc` is installed. The
-   minimum required version is hardcoded in the script.
-
-To configure libvirt, and prepare the `provisioning` and `baremetal`
-bridges:
-
+### For all nodes, Create the cluster 
 ```sh
-make configure
+make OpenShift
 ```
 
 ## Continer Native Virtualization (CNV)
@@ -125,6 +131,11 @@ called the [HyperConverged Cluster Operator](https://github.com/kubevirt/hyperco
 Deploying with the *meta operator* will launch operators for KubeVirt,
 Containerized Data Imported (CDI), Cluster Network Addons (CNA),
 Common templates (SSP), Node Maintenance Operator (NMO) and Node Labeller Operator.
+
+### Deploy OCS via operator
+
+_Coming Soon_
+
 
 ### Deploy the HCO through the OperatorHub
 
@@ -135,3 +146,6 @@ and selecting the HyperConverged Cluster Operator.
 If you want to use the CLI, we provide the a [script](CNV/deploy-cnv.sh)
 that automates all the steps to the point of having a fully functional
 CNV deployment.
+
+
+
