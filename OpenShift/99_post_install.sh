@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -xe
 
-source logging.sh
+source ../common/logging.sh
 source common.sh
 
 KUBECONFIG=${KUBECONFIG:-ocp/auth/kubeconfig}
-IFCFG_INTERFACE="assets/post-install/ifcfg-interface.template"
-IFCFG_BRIDGE="assets/post-install/ifcfg-bridge.template"
+POSTINSTALL_ASSETS_DIR="../assets/post-install"
+IFCFG_INTERFACE="${POSTINSTALL_ASSETS_DIR}/ifcfg-interface.template"
+IFCFG_BRIDGE="${POSTINSTALL_ASSETS_DIR}/ifcfg-bridge.template"
+BREXT_FILE="${POSTINSTALL_ASSETS_DIR}/99-brext-master.yaml"
 
 export bridge="${bridge:-brext}"
 
@@ -23,7 +25,7 @@ create_bridge(){
     echo "Using interface $interface"
     export interface_content=$(envsubst < ${IFCFG_INTERFACE} | base64 -w0)
     export bridge_content=$(envsubst < ${IFCFG_BRIDGE} | base64 -w0)
-    envsubst < assets/post-install/99-brext-master.yaml.template > assets/post-install/99-brext-master.yaml
+    envsubst < ${BREXT_FILE}.template > ${BREXT_FILE}
     echo "Done creating bridge definition"
   else
     echo "Bridge already there!"
@@ -37,7 +39,7 @@ apply_mc(){
 
     # Apply machine configs
     echo "Applying machine configs..."
-    oc create -f assets/post-install/*-${node_type}.yaml
+    oc create -f ${POSTINSTALL_ASSETS_DIR}/*-${node_type}.yaml
 
     # Enable auto reboot
     oc patch --type=merge --patch='{"spec":{"paused":false}}' machineconfigpool/${node_type}
