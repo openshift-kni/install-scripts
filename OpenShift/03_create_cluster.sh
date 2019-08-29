@@ -5,6 +5,7 @@ source ../common/logging.sh
 source common.sh
 
 export OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE="${OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE:-registry.svc.ci.openshift.org/ocp/release:4.2}"
+LOGLEVEL="${LOGLEVEL:-info}"
 
 function extract_installer() {
     local release_image
@@ -52,7 +53,7 @@ fi
 mkdir -p ocp
 extract_installer "${OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE}" ocp/
 cp install-config.yaml ocp/
-${OPENSHIFT_INSTALLER} --dir ocp create manifests
+${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create manifests
 # TODO - Add custom install time manifests here:
 #  - https://github.com/openshift-kni/install-scripts/issues/30
-${OPENSHIFT_INSTALLER} --dir ocp create cluster
+${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create cluster
