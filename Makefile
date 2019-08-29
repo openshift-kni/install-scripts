@@ -1,4 +1,4 @@
-.PHONY: default all  OpenShift OCS CNV
+.PHONY: default all OpenShift OCS CNV
 default: OpenShift bell
 
 all: OpenShift OCS CNV bell
@@ -11,7 +11,6 @@ OCS: OpenShift
 
 CNV: OpenShift
 	pushd CNV; ./deploy-cnv.sh; popd
-
 
 bell:
 	@echo "Done!" $$'\a'

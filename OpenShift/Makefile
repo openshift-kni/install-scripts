@@ -9,6 +9,9 @@ requirements:
 configure:
 	./02_configure_host.sh
 
+post_install:
+	./99_post_install.sh
+
 clean: host_cleanup
 
 host_cleanup:
