@@ -91,7 +91,7 @@ if not using the prepared ISO that handle the above.
 
 The following environment-specific information will be required for
 each installation.  On a properly configured and prepared cluster,
-the the following items will be discovered:
+the following items will be discovered:
 
 1. A pull secret - used to access OpenShift content - and an SSH key
    that will be used to authenticate SSH access to the control plane
