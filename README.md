@@ -49,7 +49,7 @@ the following, else optional scripts can be executed on a RHEL8 host.
    `provisioning` bridges.
 
 
-Once the aboave has been completed, additional scripts will preformteh following:
+Once the aboave has been completed, additional scripts will preform the following:
 
 1. [Validate any environment requirements
 (#22)](https://github.com/openshift-kni/install-scripts/issues/22) -
@@ -77,7 +77,7 @@ Once the aboave has been completed, additional scripts will preformteh following
    for image storage.
 1. [Deploy
    CNV](https://github.com/openshift-kni/install-scripts/blob/master/CNV/deploy-cnv.sh). [Configure
-   a bridge on the `baremetal` interface on OpenShift nodes
+   a bridge on the `External` interface on OpenShift nodes
    (#18)](https://github.com/openshift-kni/install-scripts/issues/18)
    to allow VMs access this network.
 1. Temporarily install Ripsaw, carry out some performance tests, and
@@ -102,14 +102,13 @@ configured cluster:
    for API, Ingress, and DNS access.
 1. The BMC IPMI addresses and credentials for the 3 control plane
    machines.
-1. Optionally, a Network Time Protocol (NTP) server where the default
-   public server is not accessible
+1. If detected that the provsioning host is not sync with a time source, configure the 25G switch as a source via the Storage DHCP and provide an optional script to set a source for the switch. 
 
 ## Provisioning Host Setup
 
 The provisioning host must be a RHEL-8 machine.
 
-### For a host not installed usinghte ISO:
+### For a host not installed using the ISO:
 In the OpenShift subdirectory, Make a copy of `config_example.sh` and set the required variables in
 there.
 
