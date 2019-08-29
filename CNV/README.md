@@ -1,5 +1,10 @@
 # Container Native Virtualization Deployment
 
+## Access to Developer & QE Content
+To get access to downstream bundles, you need to be granted permission in quay.
+If you see "Application not found" from this [quay application registry](https://quay.io/application/rh-osbs-operators/kubevirt-hyperconverged),
+then fill out [this form](https://docs.google.com/spreadsheets/d/1OyUtbu9aiAi3rfkappz5gcq5FjUbMQtJG4jZCNqVT20/edit#gid=0) to get access.
+
 ## CNV 2.1 for HTB
 `cnv-2.1.0.sh` is a clone of `https://pkgs.devel.redhat.com/cgit/containers/hco-bundle-registry/tree/marketplace-qe-testing.sh?h=cnv-2.1-rhel-8`.
 
