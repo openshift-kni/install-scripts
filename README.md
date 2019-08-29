@@ -29,9 +29,9 @@ will need to support both published releases and [pre-release versions
 (#12)](https://github.com/openshift-kni/install-scripts/issues/12) of
 each of these.
 
-To ease installtion, a [prepared ISO](https://github.com/openshift-kni/install-scripts/issues/20)
-can be used to install the "provioning host".  Using the ISO will address
-the following, else optional scripts can be executed on a RHEL8 host. 
+To ease installation, a [prepared ISO](https://github.com/openshift-kni/install-scripts/issues/20)
+can be used to install the "provioning host".  Using the prepared ISO addresses
+the following: 
 
 1. [Creates an admin user
    (#21)](https://github.com/openshift-kni/install-scripts/issues/21)
@@ -44,12 +44,15 @@ the following, else optional scripts can be executed on a RHEL8 host.
    are a good example of environment requirements.
 1. Apply any [configuration changes to the provisioning
    host](https://github.com/openshift-kni/install-scripts/blob/master/02_configure_host.sh)
-   that are required for the OpenShift installer - for example,
+   that are required for the OpenShift installer. For example,
    creating the `default` libvirt storage pool and the `baremetal` and
    `provisioning` bridges.
 
+Note:  
 
-Once the aboave has been completed, additional scripts will preform the following:
+Optional scripts that handle the above prerequisites may be executed 
+if not using the prepared ISO that handle the above.
+
 
 1. [Validate any environment requirements
 (#22)](https://github.com/openshift-kni/install-scripts/issues/22) -
@@ -65,7 +68,7 @@ Once the aboave has been completed, additional scripts will preform the followin
 1. Complete some post-install configuration - including [machine/node
    linkage
    (#14)](https://github.com/openshift-kni/install-scripts/issues/14),
-   and [configuring a storage VLAN on the `Internal` interface on
+   and [configuring a tagged storage VLAN on the interface connected to the `Internal` network on
    the OpenShift nodes
    (#4)](https://github.com/openshift-kni/install-scripts/issues/4).
 1. [Deploy OCS
@@ -87,8 +90,8 @@ Once the aboave has been completed, additional scripts will preform the followin
 
 
 The following environment-specific information will be required for
-each installation.  Most of these items will be discovered in a properly
-configured cluster:
+each installation.  On a properly configured and prepared cluster,
+the the following items will be discovered:
 
 1. A pull secret - used to access OpenShift content - and an SSH key
    that will be used to authenticate SSH access to the control plane
@@ -102,18 +105,18 @@ configured cluster:
    for API, Ingress, and DNS access.
 1. The BMC IPMI addresses and credentials for the 3 control plane
    machines.
-1. If detected that the provsioning host is not sync with a time source, configure the 25G switch as a source via the Storage DHCP and provide an optional script to set a source for the switch. 
+1. If detected that the provisioning host is not sync with a time source, configure the 25G switch as a source via the DHCP service  on the `Storage` network. An optional script to set a source for the switch, will be provided. 
 
 ## Provisioning Host Setup
 
 The provisioning host must be a RHEL-8 machine.
 
 ### For a host not installed using the ISO:
-In the OpenShift subdirectory, Make a copy of `config_example.sh` and set the required variables in
-there.
+In the OpenShift subdirectory, create a copy of `config_example.sh` using the existing
+user as part of the file name. For example, `config_<username>.sh`. Once the file has
+been created, set the required PULL_SECRET variable within the shell script
 
-To install some required packages configure libvirt, and prepare the 
-`provisioning` and `baremetal` bridges, from the top directory:
+To install some required packages, configure `libvirt`, `provisioning` and `baremetal` bridges, from the top directory:
 
 ```sh
 make prep
