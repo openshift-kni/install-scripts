@@ -1,4 +1,6 @@
+
 .PHONY: default all OpenShift OCS CNV prep
+
 default: OpenShift bell
 
 all: OpenShift OCS CNV bell

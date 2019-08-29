@@ -11,7 +11,7 @@ configure:
 
 create:
 	./03_create_cluster.sh
-
+  
 post_install:
 	./99_post_install.sh
 
