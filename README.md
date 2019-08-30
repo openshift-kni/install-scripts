@@ -127,6 +127,14 @@ make prep
 make OpenShift
 ```
 
+Note:  
+In order to increase the log level ouput of `openshift-install`, a `LOGLEVEL` environment variable can be used as:
+```
+export LOGLEVEL="debug"
+make OpenShift
+```
+
+
 ## Continer Native Virtualization (CNV)
 The installation of CNV related operators is managed by a *meta operator*
 called the [HyperConverged Cluster Operator](https://github.com/kubevirt/hyperconverged-cluster-operator) (HCO).
