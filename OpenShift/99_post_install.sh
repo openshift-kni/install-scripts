@@ -5,7 +5,7 @@ source ../common/logging.sh
 source common.sh
 
 KUBECONFIG=${KUBECONFIG:-ocp/auth/kubeconfig}
-POSTINSTALL_ASSETS_DIR="../assets/post-install"
+POSTINSTALL_ASSETS_DIR="./assets/post-install"
 IFCFG_INTERFACE="${POSTINSTALL_ASSETS_DIR}/ifcfg-interface.template"
 IFCFG_BRIDGE="${POSTINSTALL_ASSETS_DIR}/ifcfg-bridge.template"
 BREXT_FILE="${POSTINSTALL_ASSETS_DIR}/99-brext-master.yaml"
