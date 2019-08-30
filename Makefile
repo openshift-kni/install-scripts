@@ -6,6 +6,9 @@ all: OpenShift OCS CNV bell
 OpenShift:
 	pushd OpenShift; make; popd
 
+OpenShift-virt:
+	pushd OpenShift; make pre_install; make all; popd
+
 OCS: OpenShift
 	pushd OCS; make; popd
 
