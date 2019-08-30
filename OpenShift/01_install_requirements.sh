@@ -17,6 +17,7 @@ sudo yum -y install \
   genisoimage \
   nmap \
   jq \
+  tar \
   wget
 
 # FIXME: using deprecated network-scripts needed for NM_CONTROLLED=no
