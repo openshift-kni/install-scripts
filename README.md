@@ -29,8 +29,10 @@ will need to support both published releases and [pre-release versions
 (#12)](https://github.com/openshift-kni/install-scripts/issues/12) of
 each of these.
 
+### Preparation
+
 To ease installation, a [prepared ISO](https://github.com/openshift-kni/install-scripts/issues/20)
-can be used to install the "provioning host".  Using the prepared ISO addresses
+can be used to install the "provisioning host".  Using the prepared ISO addresses
 the following: 
 
 1. [Creates an admin user
@@ -48,11 +50,13 @@ the following:
    creating the `default` libvirt storage pool and the `baremetal` and
    `provisioning` bridges.
 
-Note:  
-
-Optional scripts that handle the above prerequisites may be executed 
+Note:  Optional scripts that handle the above prerequisites may be executed 
 if not using the prepared ISO that handle the above.
 
+
+### Installation and Validation
+
+The deployment process will use scripts to perform the following on the configuration:
 
 1. [Validate any environment requirements
 (#22)](https://github.com/openshift-kni/install-scripts/issues/22) -
