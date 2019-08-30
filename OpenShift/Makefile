@@ -1,18 +1,13 @@
 .PHONY: default all requirements configure
 default: requirements configure
 
-all: cluster post_install
+all: default
 
 requirements:
 	./01_install_requirements.sh
 
 configure:
 	./02_configure_host.sh
-
-pre_install: requirements configure
-
-cluster:
-	./03_create_cluster.sh
 
 post_install:
 	./99_post_install.sh

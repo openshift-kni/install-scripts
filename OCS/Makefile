@@ -1,5 +1,8 @@
-.PHONY: all run
-all: run
+.PHONY: default all deploy
 
-run:
+default: deploy
+
+all: deploy
+
+deploy:
 	./customize-ocs.sh

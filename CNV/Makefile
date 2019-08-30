@@ -1,7 +1,10 @@
-.PHONY: all run upgrade
-all: run
+.PHONY: default all deploy upgrade
 
-run:
+default: deploy
+
+all: deploy
+
+deploy:
 	./cnv-2.1.0.sh
 
 upgrade:

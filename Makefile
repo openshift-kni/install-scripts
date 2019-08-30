@@ -6,14 +6,11 @@ all: OpenShift OCS CNV bell
 OpenShift:
 	pushd OpenShift; make; popd
 
-OpenShift-virt:
-	pushd OpenShift; make pre_install; make all; popd
-
 OCS: OpenShift
-	pushd OCS; make; popd
+	pushd OCS; ./customize-ocs.sh; popd
 
 CNV: OpenShift
-	pushd CNV; make; popd
+	pushd CNV; ./deploy-cnv.sh; popd
 
 bell:
 	@echo "Done!" $$'\a'
