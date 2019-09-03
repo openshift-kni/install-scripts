@@ -24,7 +24,7 @@ $script_name [-h|-u URL [-i INTERFACE] [-a IPADDR]]
 EOF
 }
 
-while getopts "hi:u:" opt; do
+while getopts "hi:u:a:" opt; do
     case ${opt} in
         h)
             usage;
