@@ -7,6 +7,12 @@ source common.sh
 export OPENSHIFT_RELEASE_IMAGE="${OPENSHIFT_RELEASE_IMAGE:-registry.svc.ci.openshift.org/ocp/release:4.2}"
 LOGLEVEL="${LOGLEVEL:-info}"
 
+# Do not use unpigz to extract images due to race condition in vendored
+# docker code that oc uses.
+# See: https://github.com/openshift/oc/issues/58,
+#      https://github.com/moby/moby/issues/39859
+export MOBY_DISABLE_PIGZ=true
+
 function extract_command() {
     local release_image
     local cmd
