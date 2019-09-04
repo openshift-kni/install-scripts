@@ -15,8 +15,6 @@ $script_name [-h|-u URL [-i INTERFACE] [-a IPADDR]]
 
     -h            Output this help text.
 
-    -a IPADDR     Specify the VIP address where the provisioning service
-                  should listen.
     -i INTERFACE  Specify the network interface on the provisioning net.
                   Defaults to "eno1".
     -u URL        Specify the RHCOS image URL to use to prime the cache.
@@ -24,7 +22,7 @@ $script_name [-h|-u URL [-i INTERFACE] [-a IPADDR]]
 EOF
 }
 
-while getopts "hi:u:a:" opt; do
+while getopts "hi:u:" opt; do
     case ${opt} in
         h)
             usage;
@@ -35,9 +33,6 @@ while getopts "hi:u:a:" opt; do
             ;;
         u)
             RHCOS_IMAGE_URL=$OPTARG
-            ;;
-        a)
-            PROVISIONING_ADDRESS=$OPTARG
             ;;
     esac
 done
@@ -50,12 +45,6 @@ fi
 
 if [ -z "$PROVISIONING_INTERFACE" ]; then
     echo "ERROR: Missing provisioning interface" 1>&2
-    usage
-    exit 2
-fi
-
-if [ -z "$PROVISIONING_ADDRESS" ]; then
-    echo "ERROR: Missing provisioning address" 1>&2
     usage
     exit 2
 fi
