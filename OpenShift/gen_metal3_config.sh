@@ -63,6 +63,6 @@ data:
   deploy_ramdisk_url: "http://${PROVISIONING_ADDRESS}:6180/images/ironic-python-agent.initramfs"
   ironic_endpoint: "http://${PROVISIONING_ADDRESS}:6385/v1/"
   ironic_inspector_endpoint: "http://${PROVISIONING_ADDRESS}:5050/v1/"
-  cache_url: "http://192.168.111.1/images"
+  cache_url: "http://172.22.0.2/images"
   rhcos_image_url: "${RHCOS_IMAGE_URL}"
 EOF

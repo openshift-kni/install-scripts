@@ -53,6 +53,26 @@ function extract_installer() {
     export OPENSHIFT_INSTALLER="${outdir}/openshift-baremetal-install"
 }
 
+function rhcos_image_url() {
+
+#Dont do anything if there is a value already set
+if [[ ! -z "${RHCOS_IMAGE_URL}" ]]
+then
+  # Get the git commit that the openshift installer was built from
+  OPENSHIFT_INSTALL_COMMIT=$($OPENSHIFT_INSTALLER version | grep commit | cut -d' ' -f4)
+
+  # Get the rhcos.json for that commit
+  OPENSHIFT_INSTALLER_RHCOS=${OPENSHIFT_INSTALLER_RHCOS:-https://raw.githubusercontent.com/openshift/installer/$OPENSHIFT_INSTALL_COMMIT/data/data/rhcos.json}
+
+  # Get the rhcos.json for that commit, and find the baseURI and openstack image path
+  RHCOS_IMAGE_JSON=$(curl "${OPENSHIFT_INSTALLER_RHCOS}")
+  RHCOS_INSTALLER_IMAGE_URL=$(echo "${RHCOS_IMAGE_JSON}" | jq -r '.baseURI + .images.openstack.path')
+  export RHCOS_IMAGE_URL=${RHCOS_IMAGE_URL:-${RHCOS_INSTALLER_IMAGE_URL}}
+
+fi
+}
+
+
 # TODO - Provide scripting to help generate install-config.yaml.
 #  - https://github.com/openshift-kni/install-scripts/issues/19
 if [ ! -f install-config.yaml ] ; then
@@ -76,6 +96,8 @@ mkdir -p ocp
 extract_oc ${OPENSHIFT_RELEASE_IMAGE}
 extract_installer "${OPENSHIFT_RELEASE_IMAGE}" ocp/
 cp install-config.yaml ocp/
+rhcos_image_url
+,/gen_metal3_config.sh -u ${RHCOS_IMAGE_URL} > assets/deploy/99-metal3-config-map.yaml
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create manifests
 for file in $(find assets/deploy/ -iname '*.yaml' -type f -printf "%P\n"); do
     cp assets/deploy/${file} ocp/manifests/${file}
