@@ -33,7 +33,7 @@ create_bridge(){
 }
 
 apply_mc(){
-  for node_type in master node; do
+  for node_type in master worker; do
     # Disable auto reboot hosts in order to apply several mcos at the same time
     oc patch --type=merge --patch='{"spec":{"paused":true}}' machineconfigpool/${node_type}
 
