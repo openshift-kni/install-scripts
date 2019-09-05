@@ -4,7 +4,7 @@ set -xe
 source ../common/logging.sh
 source common.sh
 
-KUBECONFIG=${KUBECONFIG:-ocp/auth/kubeconfig}
+export KUBECONFIG=${KUBECONFIG:-ocp/auth/kubeconfig}
 POSTINSTALL_ASSETS_DIR="./assets/post-install"
 IFCFG_INTERFACE="${POSTINSTALL_ASSETS_DIR}/ifcfg-interface.template"
 IFCFG_BRIDGE="${POSTINSTALL_ASSETS_DIR}/ifcfg-bridge.template"
@@ -34,23 +34,25 @@ create_bridge(){
 
 apply_mc(){
   for node_type in master worker; do
-    # Disable auto reboot hosts in order to apply several mcos at the same time
-    oc patch --type=merge --patch='{"spec":{"paused":true}}' machineconfigpool/${node_type}
+    if test $(find "${POSTINSTALL_ASSETS_DIR}" -iname "*-${node_type}.yaml" -type f); then
+      # Disable auto reboot hosts in order to apply several mcos at the same time
+      oc patch --type=merge --patch='{"spec":{"paused":true}}' machineconfigpool/${node_type}
 
-    # Apply machine configs
-    echo "Applying machine configs..."
-    oc create -f ${POSTINSTALL_ASSETS_DIR}/*-${node_type}.yaml
+      # Apply machine configs
+      echo "Applying machine configs..."
+      oc create -f ${POSTINSTALL_ASSETS_DIR}/*-${node_type}.yaml
 
-    # Enable auto reboot
-    oc patch --type=merge --patch='{"spec":{"paused":false}}' machineconfigpool/${node_type}
+      # Enable auto reboot
+      oc patch --type=merge --patch='{"spec":{"paused":false}}' machineconfigpool/${node_type}
 
-    echo "Rebooting nodes..."
-    # This sleep is required because the machine-config changes are not immediate
-    sleep 30
+      echo "Rebooting nodes..."
+      # This sleep is required because the machine-config changes are not immediate
+      sleep 30
 
-    # The 'while' is required because in the process of rebooting the masters, the
-    # oc wait connection is lost a few times, which is normal
-    while ! oc wait mcp/${node_type} --for condition=updated --timeout 600s ; do sleep 1 ; done
+      # The 'while' is required because in the process of rebooting the masters, the
+      # oc wait connection is lost a few times, which is normal
+      while ! oc wait mcp/${node_type} --for condition=updated --timeout 600s ; do sleep 1 ; done
+    fi
   done
 }
 
