@@ -6,16 +6,16 @@ default: OpenShift bell
 all: OpenShift OCS CNV bell
 
 prep:
-	pushd OpenShift; make pre_install; popd
+	set -e; pushd OpenShift; make pre_install; popd
 
 OpenShift:
-	pushd OpenShift; make; popd
+	set -e; pushd OpenShift; make; popd
 
 OCS: OpenShift
-	pushd OCS; make; popd
+	set -e; pushd OCS; make; popd
 
 CNV: OpenShift
-	pushd CNV; make; popd
+	set -e; pushd CNV; make; popd
 
 bell:
 	@echo "Done!" $$'\a'
