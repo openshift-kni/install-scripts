@@ -77,6 +77,7 @@ extract_oc ${OPENSHIFT_RELEASE_IMAGE}
 extract_installer "${OPENSHIFT_RELEASE_IMAGE}" ocp/
 cp install-config.yaml ocp/
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create manifests
-# TODO - Add custom install time manifests here:
-#  - https://github.com/openshift-kni/install-scripts/issues/30
+for file in $(find assets/deploy/ -iname '*.yaml' -type f -printf "%P\n"); do
+    cp assets/deploy/${file} ocp/manifests/${file}
+done
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create cluster
