@@ -5,7 +5,7 @@ metadata:
   namespace: openshift-storage
 spec:
   cephVersion:
-    image: ceph/ceph:v14.2.2-20190830
+    image: ceph/ceph:v14.2.3-20190904
     allowUnsupported: false
   dataDirHostPath: /var/lib/rook
   mon:
