@@ -12,3 +12,5 @@ set -x
 # Set to the interface used by the baremetal bridge
 #INT_IF="em2"
 
+# Add extra registry (as insecure) if needed, such as
+#EXTRA_REGISTRY=registry.example.com
