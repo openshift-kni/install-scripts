@@ -3,6 +3,7 @@
 set -ex
 
 export KUBECONFIG=${KUBECONFIG:-../OpenShift/ocp/auth/kubeconfig}
+source ../OpenShift/config_${USER}.sh
 
 globalNamespace=`oc -n openshift-operator-lifecycle-manager get deployments catalog-operator -o jsonpath='{.spec.template.spec.containers[].args[1]}'`
 echo "Global Namespace: ${globalNamespace}"

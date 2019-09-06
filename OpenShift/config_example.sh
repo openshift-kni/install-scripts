@@ -17,3 +17,7 @@ set -x
 
 # Set loglevel for OpenShift installation
 #LOGLEVEL=debug
+
+# Set Quay credentials for CNV pre-release access
+# QUAY_USERNAME="user"
+# QUAY_PASSWORD="pass"
