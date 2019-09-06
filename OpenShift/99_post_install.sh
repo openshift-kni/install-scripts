@@ -33,26 +33,34 @@ create_bridge(){
 }
 
 apply_mc(){
+  # Disable auto reboot hosts in order to apply several mcos at the same time
+  for node_type in master worker; do
+    oc patch --type=merge --patch='{"spec":{"paused":true}}' machineconfigpool/${node_type}
+  done
+
+  # Add extra registry if needed (this applies clusterwide)
+  # https://docs.openshift.com/container-platform/4.1/openshift_images/image-configuration.html#images-configuration-insecure_image-configuration
+  if [ "${EXTRA_REGISTRY}" != "" ] ; then
+    echo "Adding ${EXTRA_REGISTRY}..."
+    oc patch image.config.openshift.io/cluster --type merge --patch "{\"spec\":{\"registrySources\":{\"insecureRegistries\":[\"${EXTRA_REGISTRY}\"]}}}"
+  fi
+
+  # Apply machine configs
   for node_type in master worker; do
     if test $(find "${POSTINSTALL_ASSETS_DIR}" -iname "*-${node_type}.yaml" -type f); then
-      # Disable auto reboot hosts in order to apply several mcos at the same time
-      oc patch --type=merge --patch='{"spec":{"paused":true}}' machineconfigpool/${node_type}
-
-      # Apply machine configs
       echo "Applying machine configs..."
       oc create -f ${POSTINSTALL_ASSETS_DIR}/*-${node_type}.yaml
-
-      # Enable auto reboot
-      oc patch --type=merge --patch='{"spec":{"paused":false}}' machineconfigpool/${node_type}
-
-      echo "Rebooting nodes..."
-      # This sleep is required because the machine-config changes are not immediate
-      sleep 30
-
-      # The 'while' is required because in the process of rebooting the masters, the
-      # oc wait connection is lost a few times, which is normal
-      while ! oc wait mcp/${node_type} --for condition=updated --timeout 600s ; do sleep 1 ; done
     fi
+    # Enable auto reboot
+    oc patch --type=merge --patch='{"spec":{"paused":false}}' machineconfigpool/${node_type}
+
+    echo "Rebooting nodes..."
+    # This sleep is required because the machine-config changes are not immediate
+    sleep 30
+
+    # The 'while' is required because in the process of rebooting the masters, the
+    # oc wait connection is lost a few times, which is normal
+    while ! oc wait mcp/${node_type} --for condition=updated --timeout 600s ; do sleep 1 ; done
   done
 }
 
