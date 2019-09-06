@@ -1,10 +1,22 @@
 
-.PHONY: default all OpenShift OCS CNV prep
+.PHONY: default all OpenShift OCS CNV prep preflight appliance rhel deploy
 
-default: OpenShift OCS CNV bell
+default: appliance
+
+appliance: preflight OpenShift OCS CNV bell
+
+rhel: prep OpenShift OCS CNV bell
+
+deploy: OpenShift OCS CNV bell
 
 prep:
 	set -e; pushd OpenShift; make pre_install; popd
+
+preflight:
+        pushd preflight
+        sudo ./preflight -d
+        cp config_${USERNAME}.sh install-config.yaml ../OpenShift/
+        popd
 
 OpenShift:
 	set -e; pushd OpenShift; make; popd
