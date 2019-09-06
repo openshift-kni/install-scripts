@@ -13,10 +13,7 @@ prep:
 	set -e; pushd OpenShift; make pre_install; popd
 
 preflight:
-	pushd preflight
-	sudo ./preflight -d
-	cp config_${USERNAME}.sh install-config.yaml ../OpenShift/
-	popd
+	set -e; pushd preflight; sudo ./preflight.sh -d; cp config_${USER}.sh install-config.yaml ../OpenShift/; popd
 
 OpenShift:
 	set -e; pushd OpenShift; make; popd
