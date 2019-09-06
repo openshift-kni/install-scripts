@@ -56,7 +56,7 @@ function extract_installer() {
 function rhcos_image_url() {
 
 #Dont do anything if there is a value already set
-if [[ ! -z "${RHCOS_IMAGE_URL}" ]]
+if [[ -z "${RHCOS_IMAGE_URL}" ]]
 then
   # Get the git commit that the openshift installer was built from
   OPENSHIFT_INSTALL_COMMIT=$($OPENSHIFT_INSTALLER version | grep commit | cut -d' ' -f4)
