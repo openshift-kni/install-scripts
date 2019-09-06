@@ -100,6 +100,6 @@ rhcos_image_url
 ./gen_metal3_config.sh -u ${RHCOS_IMAGE_URL} > assets/deploy/99-metal3-config-map.yaml
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create manifests
 for file in $(find assets/deploy/ -iname '*.yaml' -type f -printf "%P\n"); do
-    cp assets/deploy/${file} ocp/manifests/${file}
+    cp assets/deploy/${file} ocp/openshift/${file}
 done
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create cluster
