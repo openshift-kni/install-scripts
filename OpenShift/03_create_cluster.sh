@@ -97,7 +97,7 @@ extract_oc ${OPENSHIFT_RELEASE_IMAGE}
 extract_installer "${OPENSHIFT_RELEASE_IMAGE}" ocp/
 cp install-config.yaml ocp/
 rhcos_image_url
-,/gen_metal3_config.sh -u ${RHCOS_IMAGE_URL} > assets/deploy/99-metal3-config-map.yaml
+./gen_metal3_config.sh -u ${RHCOS_IMAGE_URL} > assets/deploy/99-metal3-config-map.yaml
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create manifests
 for file in $(find assets/deploy/ -iname '*.yaml' -type f -printf "%P\n"); do
     cp assets/deploy/${file} ocp/manifests/${file}
