@@ -1,5 +1,5 @@
 # install-scripts
-Installation scripts for OpenShift KNI clusters
+Installation scripts for OpenShift KNI clusters 
 
 ## What's going on here?
 
