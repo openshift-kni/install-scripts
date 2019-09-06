@@ -1,0 +1,36 @@
+---
+- name: generate ironic json file
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: generate json file
+    template:
+      src: ironic_hosts.j2
+      dest: ironic_hosts.json
+      mode: '0644'
+    delegate_to: localhost
+    run_once: True
+
+- name: generate ironic json file
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: generate json file
+    template:
+      src: config_user.j2
+      dest: config_$KNIUSER.sh
+      mode: '0755'
+    delegate_to: localhost
+    run_once: True
+
+- name: generate install-config.yaml file
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: generate yaml file
+    template:
+      src: install-config.j2
+      dest: install-config.yaml
+      mode: '0644'
+    delegate_to: localhost
+    run_once: True
