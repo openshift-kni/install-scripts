@@ -12,6 +12,14 @@ BREXT_FILE="${POSTINSTALL_ASSETS_DIR}/99-brext-master.yaml"
 
 export bridge="${bridge:-brext}"
 
+create_metal3_config(){
+  ./gen_metal3_config.sh -u $(cat ocp/.openshift_install_state.json | jq -r '.["*rhcos.Image"]') > ${POSTINSTALL_ASSETS_DIR}/metal3-config.yaml
+}
+
+apply_metal3_config(){
+  oc create -f ${POSTINSTALL_ASSETS_DIR}/{metal3-config.yaml,mariadb-password.yaml}
+}
+
 create_bridge(){
   echo "Deploying Bridge ${bridge}..."
 
@@ -56,5 +64,7 @@ apply_mc(){
   done
 }
 
+create_metal3_config
+apply_metal3_config
 create_bridge
 apply_mc

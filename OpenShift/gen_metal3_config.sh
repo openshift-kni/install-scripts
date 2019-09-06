@@ -7,22 +7,26 @@ script_name=$0
 RHCOS_IMAGE_URL=""
 PROVISIONING_INTERFACE="eno1"
 PROVISIONING_ADDRESS="172.22.0.3"
+CACHE_URL="http://192.168.111.1/images"
 
 function usage {
     cat - <<EOF
 
-$script_name [-h|-u URL [-i INTERFACE] [-a IPADDR]]
+$script_name [-h|-u URL [-i INTERFACE] [-c CACHE_URL]]
 
     -h            Output this help text.
 
-    -i INTERFACE  Specify the network interface on the provisioning net.
-                  Defaults to "eno1".
     -u URL        Specify the RHCOS image URL to use to prime the cache.
 
+    -i INTERFACE  Specify the network interface on the provisioning net.
+                  Defaults to "eno1".
+
+    -c CACHE_URL  Specify a cache URL where the image can be downloaded,
+                  otherwise, it will use the aforementioned URL.
 EOF
 }
 
-while getopts "hi:u:" opt; do
+while getopts "hi:u:c:" opt; do
     case ${opt} in
         h)
             usage;
@@ -33,6 +37,9 @@ while getopts "hi:u:" opt; do
             ;;
         u)
             RHCOS_IMAGE_URL=$OPTARG
+            ;;
+        c)
+            CACHE_URL=$OPTARG
             ;;
     esac
 done
@@ -45,6 +52,12 @@ fi
 
 if [ -z "$PROVISIONING_INTERFACE" ]; then
     echo "ERROR: Missing provisioning interface" 1>&2
+    usage
+    exit 2
+fi
+
+if [ -z "$CACHE_URL" ]; then
+    echo "ERROR: Missing cache URL" 1>&2
     usage
     exit 2
 fi
@@ -63,6 +76,6 @@ data:
   deploy_ramdisk_url: "http://${PROVISIONING_ADDRESS}:6180/images/ironic-python-agent.initramfs"
   ironic_endpoint: "http://${PROVISIONING_ADDRESS}:6385/v1/"
   ironic_inspector_endpoint: "http://${PROVISIONING_ADDRESS}:5050/v1/"
-  cache_url: "http://192.168.111.1/images"
+  cache_url: "${CACHE_URL}"
   rhcos_image_url: "${RHCOS_IMAGE_URL}"
 EOF
