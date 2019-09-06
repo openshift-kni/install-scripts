@@ -9,10 +9,10 @@ prep:
 OpenShift:
 	set -e; pushd OpenShift; make; popd
 
-OCS: OpenShift
+OCS:
 	set -e; pushd OCS; make; popd
 
-CNV: OpenShift
+CNV:
 	set -e; pushd CNV; make; popd
 
 bell:
