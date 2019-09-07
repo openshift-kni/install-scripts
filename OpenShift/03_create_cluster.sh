@@ -74,11 +74,11 @@ fi
 get_provision_if() {
 
 #Dont do anything if there is a value already set
-if [[ -z "${PRO_IF}" ]]
+if [[ -z "${INTERNAL_NIC}" ]]
 then
   lshw -quiet -class network | grep -A 1 "bus info" | grep name | awk -F': ' '{print $2}'|grep e | while read interface; do
     if (`ip a|grep $interface|grep provisioning>/dev/null 2>&1`); then
-        PRO_IF="$interface"
+        INTERNAL_NIC="$interface"
     fi
   done
 fi
@@ -108,7 +108,7 @@ extract_oc ${OPENSHIFT_RELEASE_IMAGE}
 extract_installer "${OPENSHIFT_RELEASE_IMAGE}" ocp/
 cp install-config.yaml ocp/
 rhcos_image_url
-./gen_metal3_config.sh -u ${RHCOS_IMAGE_URL} -i ${PRO_IF} > assets/deploy/99-metal3-config-map.yaml
+./gen_metal3_config.sh -u ${RHCOS_IMAGE_URL} -i ${INTERNAL_NIC} > assets/deploy/99-metal3-config-map.yaml
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create manifests
 for file in $(find assets/deploy/ -iname '*.yaml' -type f -printf "%P\n"); do
     cp assets/deploy/${file} ocp/openshift/${file}
