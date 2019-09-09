@@ -5,4 +5,4 @@ default: deploy
 all: deploy
 
 deploy:
-	./customize-ocs.sh
+	./deploy-ocs.sh
