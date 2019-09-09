@@ -14,3 +14,6 @@ set -x
 
 # Add extra registry (as insecure) if needed, such as
 #EXTRA_REGISTRY=registry.example.com
+
+# Set loglevel for OpenShift installation
+#LOGLEVEL=debug

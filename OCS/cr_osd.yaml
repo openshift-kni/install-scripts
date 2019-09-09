@@ -1,0 +1,16 @@
+apiVersion: "local.storage.openshift.io/v1"
+kind: "LocalVolume"
+metadata:
+  name: "osd-disks"
+  namespace: "openshift-storage"
+spec:
+  nodeSelector:
+    nodeSelectorTerms:
+    - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values: [${masters}]
+  storageClassDevices:
+    - storageClassName: "osd-sc"
+      volumeMode: Block
+      devicePaths: [${osd_devices}]
