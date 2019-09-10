@@ -1,9 +1,9 @@
 ---
-- name: generate ironic json file
+- name: Redfish & Generate Configuration Files
   hosts: bmcs
   gather_facts: false
   tasks:
-    - name: Get several inventories
+    - name: Redfish Gather MACs
       redfish_facts:
         category: Systems
         command: GetNicInventory
@@ -66,4 +66,21 @@
         {{ inventory_hostname }}.{{ cluster }}.{{ domain }}  $extmacaddress  $extip  External  $dnstat
         {{ inventory_hostname }}.{{ cluster }}.{{ domain }}  $macaddress  $intip  Internal  Success
         EOF
+      delegate_to: localhost
+
+    - name: Refresh inventory to ensure new instances exist in inventory
+      meta: refresh_inventory
+
+- name: Power Cycle Off Masters
+  hosts: masters
+  gather_facts: false
+
+  tasks:
+    - name: Power Cycle Off Masters
+      redfish_command:
+        category: Systems
+        command: PowerForceOff
+        baseuri: "{{ ipmi_address }}"
+        username: "{{ ipmi_username }}"
+        password: "{{ ipmi_password }}"
       delegate_to: localhost
