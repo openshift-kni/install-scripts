@@ -43,3 +43,31 @@ if [ ${#PULL_SECRET} = 0 ]; then
   echo "Get a valid pull secret (json string) from https://cloud.openshift.com/clusters/install#pull-secret"
   exit 1
 fi
+
+
+WORKING_DIR=${WORKING_DIR:-"/opt/dev-scripts"}
+# Ironic vars
+export IRONIC_IMAGE=${IRONIC_IMAGE:-"quay.io/metal3-io/ironic:master"}
+export IRONIC_INSPECTOR_IMAGE=${IRONIC_INSPECTOR_IMAGE:-"quay.io/metal3-io/ironic-inspector:master"}
+export IPA_DOWNLOADER_IMAGE=${IPA_DOWNLOADER_IMAGE:-"quay.io/metal3-io/ironic-ipa-downloader:master"}
+export COREOS_DOWNLOADER_IMAGE=${COREOS_DOWNLOADER_IMAGE:-"quay.io/openshift-metal3/rhcos-downloader:master"}
+export IRONIC_DATA_DIR="$WORKING_DIR/ironic"
+
+export KUBECONFIG="${SCRIPTDIR}/ocp/auth/kubeconfig"
+
+# Use a cloudy ssh that doesn't do Host Key checking
+export SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5"
+
+if [ ! -d "$WORKING_DIR" ]; then
+  echo "Creating Working Dir"
+  sudo mkdir "$WORKING_DIR"
+  sudo chown "${USER}:${USER}" "$WORKING_DIR"
+  chmod 755 "$WORKING_DIR"
+fi
+
+if [ ! -d "$IRONIC_DATA_DIR" ]; then
+  echo "Creating Ironic Data Dir"
+  sudo mkdir "$IRONIC_DATA_DIR"
+  sudo chown "${USER}:${USER}" "$IRONIC_DATA_DIR"
+  chmod 755 "$IRONIC_DATA_DIR"
+fi

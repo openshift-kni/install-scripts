@@ -103,6 +103,12 @@ if [[ "${PULL_SECRET}" != *"cloud.openshift.com"* ]]; then
     exit 1
 fi
 
+if [[ ${CACHE_IMAGES^^} != "FALSE" ]]
+then
+    ./cache_images.sh
+fi
+
+
 mkdir -p ocp
 extract_oc ${OPENSHIFT_RELEASE_IMAGE}
 extract_installer "${OPENSHIFT_RELEASE_IMAGE}" ocp/

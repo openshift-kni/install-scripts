@@ -7,7 +7,7 @@ script_name=$0
 RHCOS_IMAGE_URL=""
 PROVISIONING_INTERFACE="eno1"
 PROVISIONING_ADDRESS="172.22.0.3"
-CACHE_URL="http://172.22.0.2/images"
+CACHE_URL="http://172.22.0.1/images"
 
 function usage {
     cat - <<EOF
@@ -20,7 +20,7 @@ $script_name [-h|-u URL [-i INTERFACE] [-a IPADDR] [-c CACHE_URL]]
                   Defaults to "eno1".
     -u URL        Specify the RHCOS image URL to use to prime the cache.
     -c CACHE_URL  Specify a cache URL where the image can be downloaded
-                  Defaults to http://172.22.0.2/images.
+                  Defaults to http://172.22.0.1/images.
 
 EOF
 }
