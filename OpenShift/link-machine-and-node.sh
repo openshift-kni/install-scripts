@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ../common/util.sh
+source ../common/utils.sh
 
 set -x
 set -e
