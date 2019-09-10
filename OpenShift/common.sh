@@ -45,7 +45,7 @@ if [ ${#PULL_SECRET} = 0 ]; then
 fi
 
 
-WORKING_DIR=${WORKING_DIR:-"/opt/dev-scripts"}
+WORKING_DIR=${WORKING_DIR:-"/opt/install-scripts"}
 # Ironic vars
 export IRONIC_IMAGE=${IRONIC_IMAGE:-"quay.io/metal3-io/ironic:master"}
 export IRONIC_INSPECTOR_IMAGE=${IRONIC_INSPECTOR_IMAGE:-"quay.io/metal3-io/ironic-inspector:master"}
