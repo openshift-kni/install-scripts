@@ -16,7 +16,7 @@ if [[ -z "${cluster_network}" ]]; then
 fi
 
 # Provide disks to use for mon and osd pvcs
-export cluster="${cluster:-mycluster}"
+export cluster="${cluster:-openshift-storage}"
 # Size number for mon pvcs
 export mon_size="${mon_size:-5}"
 # List of /dev/* disks to use for osd, separated by comma
@@ -79,10 +79,7 @@ curl -s https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kube
 
 while ! oc wait --for condition=ready pod -l app=rook-ceph-tools -n ${NAMESPACE} --timeout=2400s; do sleep 10 ; done
 
-oc create -f cephblockpool.yaml
-oc create -f storageclass.yaml
-oc create -f monitoring.yaml
-oc create -f prometheus.yaml
+oc patch storageclass ${cluster}-ceph-rbd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
 # Wait for OSD prepare jobs to be completed
 echo "Waiting for the OSD jobs to be run..."
