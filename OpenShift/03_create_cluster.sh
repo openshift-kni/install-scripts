@@ -118,7 +118,7 @@ fi
 
 
 cp install-config.yaml ocp/
-get_provinsion_if
+get_provision_if
 ./gen_metal3_config.sh -u ${RHCOS_IMAGE_URL} -i ${INTERNAL_NIC} > assets/deploy/99-metal3-config-map.yaml
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create manifests
 for file in $(find assets/deploy/ -iname '*.yaml' -type f -printf "%P\n"); do
