@@ -1,9 +1,9 @@
 ---
-- name: generate ironic json file
+- name: Redfish & Generate Configuration Files
   hosts: bmcs
   gather_facts: false
   tasks:
-    - name: Get several inventories
+    - name: Redfish Gather MACs
       redfish_facts:
         category: Systems
         command: GetNicInventory
