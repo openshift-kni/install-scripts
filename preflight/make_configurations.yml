@@ -11,7 +11,7 @@
     delegate_to: localhost
     run_once: True
 
-- name: generate ironic json file
+- name: generate config user file
   hosts: all
   gather_facts: false
   tasks:
