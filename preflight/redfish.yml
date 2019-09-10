@@ -84,3 +84,4 @@
         username: "{{ ipmi_username }}"
         password: "{{ ipmi_password }}"
       delegate_to: localhost
+      ignore_errors: true
