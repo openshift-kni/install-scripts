@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ../common/util.sh
+
 set -x
 set -e
 
