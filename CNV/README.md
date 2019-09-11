@@ -21,6 +21,18 @@ QUAY_USERNAME
 QUAY_PASSWORD
 ```
 
+## Running vms with bridges
+
+**IMPORTANT:** Due to https://bugzilla.redhat.com/show_bug.cgi?id=1732598 and https://github.com/intel/multus-cni/issues/325, it is required to replace the content on the file `/etc/kubernetes/cni/net.d/80-openshift-network.conf` with the following content:
+
+```
+{ "name": "openshift-sdn", "type": "multus", "namespaceIsolation": true, "logLevel": "verbose", "kubeconfig": "/etc/kubernetes/cni/net.d/multus.d/multus.kubeconfig", "delegates": [ { "cniVersion": "0.3.1", "name": "openshift-sdn", "type": "openshift-sdn" } ] }
+```
+
+This cannot be done via a machine-config because it is created by the `openshift-cni` pod and if the hosts are rebooted, the changes are lost.
+
+The [fix-multus.sh](fix-multus.sh) script can be used as a temporary workaround
+
 ## Upgrade
 `cnv-upgrade.sh` is a clone of `curl -k https://pkgs.devel.redhat.com/cgit/containers/hco-bundle-registry/plain/qe-upgrade.sh?h=cnv-2.1-rhel-8`.
 
