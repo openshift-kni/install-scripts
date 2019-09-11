@@ -206,7 +206,7 @@ then
     exit 1
 fi
 echo ""
-echo "Confinuing with information above"
+echo "Continuing with information above"
 echo ""
 
 ##################################################################
