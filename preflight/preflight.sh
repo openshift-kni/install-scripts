@@ -189,6 +189,27 @@ firewall-cmd --zone=public --remove-port=68/udp >/dev/null 2>&1
 firewall-cmd --zone=public --remove-port=67/udp >/dev/null 2>&1
 
 ##################################################################
+# Print Out Collected Data Allow for confirmation              	 #
+##################################################################
+
+echo ""
+head -n 7 dhcps | tail -n +2 | column -t
+echo " "
+tail -n +9 dhcps | column -t
+echo ""
+echo -n "Pausing for 30 seconds to confirm the information is correct (Y/N)?"
+read -n 1 -r -t 30
+if [[ $REPLY =~ ^[Nn]$ ]]
+then
+    echo ""
+    echo "Information confirmed not correct exiting Preflight now"
+    exit 1
+fi
+echo ""
+echo "Confinuing with information above"
+echo ""
+
+##################################################################
 # Run Make Configurations Playbook                               #
 ##################################################################
 
@@ -271,15 +292,7 @@ else
    fi
 fi
 
-##################################################################
-# Print Out DHCP/DNS Scope				                             	 #
-##################################################################
-
-#column -t dhcps | sed 's/###/ /g'
-echo " "
-head -n 7 dhcps | tail -n +2 | column -t
-echo " "
-tail -n +9 dhcps | column -t
+echo "Preflight run complete!"
 
 ##################################################################
 # Since we ran as sudo cleanup file perms
