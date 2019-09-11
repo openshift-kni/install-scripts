@@ -19,7 +19,7 @@ source $CONFIG
 
 # Connect to system libvirt
 export LIBVIRT_DEFAULT_URI=qemu:///system
-if [ "$USER" != "root" -a "${XDG_RUNTIME_DIR:-}" == "/run/user/0" ] ; then
+if [ "${USER}" != "root" -a "${XDG_RUNTIME_DIR:-}" == "/run/user/0" ] ; then
     echo "Please use a non-root user, WITH a login shell (e.g. su - USER)"
     exit 1
 fi
@@ -42,4 +42,20 @@ if [ ${#PULL_SECRET} = 0 ]; then
   echo "No valid PULL_SECRET set in ${CONFIG}"
   echo "Get a valid pull secret (json string) from https://cloud.openshift.com/clusters/install#pull-secret"
   exit 1
+fi
+
+
+# Ironic vars
+export IRONIC_IMAGE=${IRONIC_IMAGE:-"quay.io/metal3-io/ironic:master"}
+export COREOS_DOWNLOADER_IMAGE=${COREOS_DOWNLOADER_IMAGE:-"quay.io/openshift-metal3/rhcos-downloader:master"}
+export CACHED_IMAGE_DIR="${SCRIPTDIR}/cache"
+
+export KUBECONFIG="${SCRIPTDIR}/ocp/auth/kubeconfig"
+
+
+if [ ! -d "${CACHED_IMAGE_DIR}" ]; then
+  echo "Creating Cached Data Dir"
+  sudo mkdir "${CACHED_IMAGE_DIR}"
+  sudo chown "${USER}:${USER}" "${CACHED_IMAGE_DIR}"
+  chmod 755 "${CACHED_IMAGE_DIR}"
 fi

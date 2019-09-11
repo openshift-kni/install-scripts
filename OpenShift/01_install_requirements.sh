@@ -18,6 +18,7 @@ sudo yum -y install \
   nmap \
   jq \
   tar \
+  podman \
   wget
 
 # FIXME: using deprecated network-scripts needed for NM_CONTROLLED=no
