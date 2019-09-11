@@ -4,15 +4,27 @@ LOCALNAMESPACE="local-storage"
 
 # export is required for envsubst
 export rook_override="${rook_override:-false}"
-export public_network="${public_network:-1.1.1.1/24}"
-export cluster_network="${cluster_network:-1.1.1.1/24}"
+
+# Detect network subnets based on the deploy host addresses
+# Do not do anything if env variables already set
+if [[ -z "${public_network}" ]]; then
+  export public_network="$(ip r | awk '/dev\ baremetal\ proto\ kernel\ scope\ link\ src/ {print $1}')"
+fi
+
+if [[ -z "${cluster_network}" ]]; then
+  export cluster_network="$(ip r | awk '/dev\ provisioning\ proto\ kernel\ scope\ link\ src/ {print $1}')"
+fi
 
 # Provide disks to use for mon and osd pvcs
-export cluster="${cluster:-mycluster}"
+export cluster="${cluster:-openshift-storage}"
 # Size number for mon pvcs
 export mon_size="${mon_size:-5}"
 # List of /dev/* disks to use for osd, separated by comma
-export osd_devices="${osd_devices:-}"
+# If environment var not set autogenerate the list with all disks detected on
+# the deploy host except the first one which is used for OS
+if [[ -z "${osd_devices}" ]]; then
+  export osd_devices="$(lsblk -p -d -n -o name -I8,259 | tail -n +2 | paste -s -d ',')"
+fi
 # Size number for osd pvcs
 export osd_size="${osd_size:-55}"
 
@@ -67,10 +79,7 @@ curl -s https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kube
 
 while ! oc wait --for condition=ready pod -l app=rook-ceph-tools -n ${NAMESPACE} --timeout=2400s; do sleep 10 ; done
 
-oc create -f cephblockpool.yaml
-oc create -f storageclass.yaml
-oc create -f monitoring.yaml
-oc create -f prometheus.yaml
+oc patch storageclass ${cluster}-ceph-rbd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
 # Wait for OSD prepare jobs to be completed
 echo "Waiting for the OSD jobs to be run..."
