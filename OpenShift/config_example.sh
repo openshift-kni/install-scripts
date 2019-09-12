@@ -17,3 +17,6 @@ set -x
 
 # Set loglevel for OpenShift installation
 #LOGLEVEL=debug
+
+# Aviod caching of the RHCOS image
+#CACHE_IMAGES=false
