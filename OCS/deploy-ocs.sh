@@ -1,4 +1,5 @@
 #!/bin/bash
+ocs_version="${ocs_version:-release-4.2}"
 NAMESPACE="openshift-storage"
 LOCALNAMESPACE="local-storage"
 
@@ -26,16 +27,19 @@ if [[ -z "${osd_devices}" ]]; then
   export osd_devices="$(lsblk -p -d -n -o name -I8,259 | tail -n +2 | paste -s -d ',')"
 fi
 # Size number for osd pvcs
-export osd_size="${osd_size:-55}"
+export osd_size="${osd_size:-}"
 
 if [ "${osd_devices}" == "" ]; then
+  echo You need to define osd_devices
+  exit 1
+elif [ "${osd_size}" == "" ]; then
   echo You need to define osd_devices
   exit 1
 else
  echo Using osd_devices ${osd_devices}
 fi
 
-oc create -f https://raw.githubusercontent.com/openshift/ocs-operator/master/deploy/deploy-with-olm.yaml
+oc create -f https://raw.githubusercontent.com/openshift/ocs-operator/${ocs_version}/deploy/deploy-with-olm.yaml
 
 while ! oc wait --for condition=ready pod -l name=ocs-operator -n ${NAMESPACE} --timeout=2400s; do sleep 10 ; done
 while ! oc wait --for condition=ready pod -l app=rook-ceph-operator -n ${NAMESPACE} --timeout=2400s; do sleep 10 ; done
