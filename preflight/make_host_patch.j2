@@ -1,0 +1,39 @@
+{
+  "status": {
+    "hardware": {
+      "hostname": "unassigned",
+      "nics": [
+        {
+          "ip": "unassigned",
+          "mac": "{{ hardware_json.ansible_facts.redfish_facts.nic.entries[0][1][3].PermanentMACAddress }}",
+          "model": "{{ hardware_json.ansible_facts.redfish_facts.nic.entries[0][1][3].Description }}",
+          "speedGbps": {{ hardware_json.ansible_facts.redfish_facts.nic.entries[0][1][3].SpeedMbps }},
+          "vlanId": 0,
+          "pxe": true,
+          "name": "eno1"
+        }
+      ],
+      "systemVendor": {
+        "manufacturer": "{{ hardware_json.ansible_facts.redfish_facts.system.entries[0][1].Manufacturer }}",
+        "productName": "{{ hardware_json.ansible_facts.redfish_facts.system.entries[0][1].Model }}",
+        "serialNumber": "{{ hardware_json.ansible_facts.redfish_facts.system.entries[0][1].SerialNumber }}"
+      },
+      "firmware": {
+        "bios": {
+          "date": "unassigned",
+          "vendor": "{{ hardware_json.ansible_facts.redfish_facts.bios_attribute.entries[0][1].SystemManufacturer }}",
+          "version": "{{ hardware_json.ansible_facts.redfish_facts.bios_attribute.entries[0][1].SystemBiosVersion }}"
+        }
+      },
+      "ramMebibytes": {{ hardware_json.ansible_facts.redfish_facts.system.entries[0][1].MemorySummary.TotalSystemMemoryGiB }},
+      "storage": [],
+      "cpu": {
+        "arch": "x86_64",
+        "model": "{{ hardware_json.ansible_facts.redfish_facts.system.entries[0][1].ProcessorSummary.Model }}",
+        "clockMegahertz": "{{ hardware_json.ansible_facts.redfish_facts.bios_attribute.entries[0][1].ProcCoreSpeed }}",
+        "count": {{ hardware_json.ansible_facts.redfish_facts.system.entries[0][1].ProcessorSummary.LogicalProcessorCount }},
+        "flags": []
+      }
+    }
+  }
+}
