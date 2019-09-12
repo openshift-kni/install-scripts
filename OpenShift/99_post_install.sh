@@ -64,5 +64,6 @@ apply_mc(){
   done
 }
 
+./add-machine-ips.sh
 create_bridge
 apply_mc
