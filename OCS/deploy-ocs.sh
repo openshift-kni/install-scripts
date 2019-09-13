@@ -3,6 +3,18 @@ ocs_version="${ocs_version:-release-4.2}"
 NAMESPACE="openshift-storage"
 LOCALNAMESPACE="local-storage"
 
+if [ -z "${KUBECONFIG}" ]; then
+  export KUBECONFIG=$(find ${HOME} -iname kubeconfig -type f)
+  if [ ! -z "${KUBECONFIG}" ]; then
+    echo "Loading kubeconfig from $KUBECONFIG"
+  else
+    echo "Could not find kubeconfig location"
+    exit 1
+  fi
+else
+  echo "Loading kubeconfig from $KUBECONFIG"
+fi
+
 # export is required for envsubst
 export rook_override="${rook_override:-false}"
 
