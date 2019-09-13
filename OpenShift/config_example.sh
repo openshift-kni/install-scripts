@@ -18,5 +18,8 @@ set -x
 # Set loglevel for OpenShift installation
 #LOGLEVEL=debug
 
-# Aviod caching of the RHCOS image
+# Avoid caching of the RHCOS image
 #CACHE_IMAGES=false
+
+# Configure custom ntp servers if needed
+#NTP_SERVERS="00.my.internal.ntp.server.com;01.other.ntp.server.com"

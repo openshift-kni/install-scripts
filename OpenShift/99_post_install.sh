@@ -47,9 +47,11 @@ apply_mc(){
 
   # Apply machine configs
   for node_type in master worker; do
-    if test $(find "${POSTINSTALL_ASSETS_DIR}" -iname "*-${node_type}.yaml" -type f); then
+    if $(ls ${POSTINSTALL_ASSETS_DIR}/*-${node_type}.yaml >& /dev/null); then
       echo "Applying machine configs..."
-      oc create -f ${POSTINSTALL_ASSETS_DIR}/*-${node_type}.yaml
+      for manifest in $(ls ${POSTINSTALL_ASSETS_DIR}/*-${node_type}.yaml); do
+        oc create -f ${manifest}
+      done
     fi
     # Enable auto reboot
     oc patch --type=merge --patch='{"spec":{"paused":false}}' machineconfigpool/${node_type}
@@ -64,6 +66,20 @@ apply_mc(){
   done
 }
 
+create_ntp_config(){
+  if [ "${NTP_SERVERS}" ]; then
+    cp assets/post-install/99-chronyd-custom-master.yaml{.optional,}
+    cp assets/post-install/99-chronyd-custom-worker.yaml{.optional,}
+    NTPFILECONTENT=$(cat assets/files/etc/chrony.conf)
+    for ntp in $(echo ${NTP_SERVERS} | tr ";" "\n"); do
+      NTPFILECONTENT="${NTPFILECONTENT}"$'\n'"pool ${ntp} iburst"
+    done
+    NTPFILECONTENT=$(echo "${NTPFILECONTENT}" | base64 -w0)
+    sed -i -e "s/NTPFILECONTENT/${NTPFILECONTENT}/g" assets/post-install/99-chronyd-custom-*.yaml
+  fi
+}
+
 ./add-machine-ips.sh
 create_bridge
+create_ntp_config
 apply_mc
