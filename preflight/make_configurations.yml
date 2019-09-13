@@ -34,3 +34,19 @@
       mode: '0644'
     delegate_to: localhost
     run_once: True
+    
+- name: generate host patch json
+  hosts: masters
+  gather_facts: false
+  tasks:
+
+  - name: pull in hw profile
+    set_fact:
+      hardware_json: "{{ lookup('file', '{{ inventory_hostname }}.hwprofile.json') | from_json }}"
+
+  - name: make_host_patch_json with jinga2
+    template:
+      src: host_patch.j2
+      dest: host_patch.{{ inventory_hostname }}.json
+      mode: '0755'
+    delegate_to: localhost
