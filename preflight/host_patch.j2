@@ -1,10 +1,10 @@
 {
   "status": {
     "hardware": {
-      "hostname": "unassigned",
+      "hostname": "${hostname}",
       "nics": [
         {
-          "ip": "unassigned",
+          "ip": "${ipaddr}",
           "mac": "{{ hardware_json.ansible_facts.redfish_facts.nic.entries[0][1][3].PermanentMACAddress }}",
           "model": "{{ hardware_json.ansible_facts.redfish_facts.nic.entries[0][1][3].Description }}",
           "speedGbps": {{ hardware_json.ansible_facts.redfish_facts.nic.entries[0][1][3].SpeedMbps }},
