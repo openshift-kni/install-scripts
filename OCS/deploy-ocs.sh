@@ -45,7 +45,7 @@ if [ "${osd_devices}" == "" ]; then
   echo You need to define osd_devices
   exit 1
 elif [ "${osd_size}" == "" ]; then
-  echo You need to define osd_devices
+  echo You need to define osd_size
   exit 1
 else
  echo Using osd_devices ${osd_devices}
