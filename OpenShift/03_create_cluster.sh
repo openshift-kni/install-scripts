@@ -54,39 +54,33 @@ function extract_installer() {
 }
 
 function rhcos_image_url() {
+  #Dont do anything if there is a value already set
+  if [[ -z "${RHCOS_IMAGE_URL}" ]]; then
+    # Get the git commit that the openshift installer was built from
+    OPENSHIFT_INSTALL_COMMIT=$($OPENSHIFT_INSTALLER version | grep commit | cut -d' ' -f4)
 
-#Dont do anything if there is a value already set
-if [[ -z "${RHCOS_IMAGE_URL}" ]]
-then
-  # Get the git commit that the openshift installer was built from
-  OPENSHIFT_INSTALL_COMMIT=$($OPENSHIFT_INSTALLER version | grep commit | cut -d' ' -f4)
+    # Get the rhcos.json for that commit
+    OPENSHIFT_INSTALLER_RHCOS=${OPENSHIFT_INSTALLER_RHCOS:-https://raw.githubusercontent.com/openshift/installer/$OPENSHIFT_INSTALL_COMMIT/data/data/rhcos.json}
 
-  # Get the rhcos.json for that commit
-  OPENSHIFT_INSTALLER_RHCOS=${OPENSHIFT_INSTALLER_RHCOS:-https://raw.githubusercontent.com/openshift/installer/$OPENSHIFT_INSTALL_COMMIT/data/data/rhcos.json}
-
-  # Get the rhcos.json for that commit, and find the baseURI and openstack image path
-  RHCOS_IMAGE_JSON=$(curl "${OPENSHIFT_INSTALLER_RHCOS}")
-  RHCOS_INSTALLER_IMAGE_URL=$(echo "${RHCOS_IMAGE_JSON}" | jq -r '.baseURI + .images.openstack.path')
-  export RHCOS_IMAGE_URL=${RHCOS_IMAGE_URL:-${RHCOS_INSTALLER_IMAGE_URL}}
-
-fi
+    # Get the rhcos.json for that commit, and find the baseURI and openstack image path
+    RHCOS_IMAGE_JSON=$(curl "${OPENSHIFT_INSTALLER_RHCOS}")
+    RHCOS_INSTALLER_IMAGE_URL=$(echo "${RHCOS_IMAGE_JSON}" | jq -r '.baseURI + .images.openstack.path')
+    export RHCOS_IMAGE_URL=${RHCOS_IMAGE_URL:-${RHCOS_INSTALLER_IMAGE_URL}}
+  fi
 }
-get_provision_if() {
 
-#Dont do anything if there is a value already set
-if [[ -z "${INTERNAL_NIC}" ]]
-then
-  lshw -quiet -class network | grep -A 1 "bus info" | grep name | awk -F': ' '{print $2}'|grep e | while read interface; do
-    if (`ip a|grep $interface|grep provisioning>/dev/null 2>&1`); then
+function get_provision_if() {
+  #Dont do anything if there is a value already set
+  if [[ -z "${INTERNAL_NIC}" ]]; then
+    lshw -quiet -class network | grep -A 1 "bus info" | grep name | awk -F': ' '{print $2}'|grep e | while read interface; do
+      if (`ip a|grep $interface|grep provisioning>/dev/null 2>&1`); then
         INTERNAL_NIC="$interface"
-    fi
-  done
-fi
+      fi
+    done
+  fi
 }
 
-# TODO - Provide scripting to help generate install-config.yaml.
-#  - https://github.com/openshift-kni/install-scripts/issues/19
-if [ ! -f install-config.yaml ] ; then
+if [ ! -f install-config.yaml ]; then
     echo "Please create install-config.yaml"
     exit 1
 fi
@@ -115,7 +109,6 @@ if [[ ${CACHE_IMAGES^^} != "FALSE" ]]
 then
     ./cache_images.sh
 fi
-
 
 cp install-config.yaml ocp/
 get_provision_if
