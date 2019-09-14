@@ -2,6 +2,7 @@
 set -xe
 
 source ../common/logging.sh
+source ../common/utils.sh
 source common.sh
 
 export KUBECONFIG=${KUBECONFIG:-ocp/auth/kubeconfig}
