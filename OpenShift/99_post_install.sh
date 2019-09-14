@@ -212,7 +212,7 @@ function add-machine-ips() {
   CLUSTER_NAME=$(hostname -f | cut -d'.' -f 2)
 
   for node_name in $(oc get nodes -o template --template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'); do
-      machine_name=${CLUSTER_NAME-}$(echo ${node_name} | grep -oE "(master|worker)-[0-9]+")
+      machine_name="${CLUSTER_NAME-}-$(echo ${node_name}" | grep -oE "(master|worker)-[0-9]+")
       if [[ "${machine_name}" == *"worker"* ]]; then
           echo "Skipping worker ${machine_name} because it should have inspection data to link automatically"
           continue
