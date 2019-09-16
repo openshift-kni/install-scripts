@@ -5,6 +5,12 @@ set -ex
 source ../common/logging.sh
 source common.sh
 
+# Add firewall rules to ensure the image cache can be reached on the host
+echo "ZONE=libvirt" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-provisioning
+sudo ifdown provisioning && sudo ifup provisioning
+sudo firewall-cmd --zone=libvirt --add-port=80/tcp
+sudo firewall-cmd --zone=libvirt --add-port=80/tcp --permanent
+
 # Either pull or build the ironic images
 # To build the IRONIC image set
 # IRONIC_IMAGE=https://github.com/metalkube/metalkube-ironic
