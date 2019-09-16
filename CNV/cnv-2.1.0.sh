@@ -15,7 +15,7 @@ CLUSTER="${CLUSTER:-OPENSHIFT}"
 MARKETPLACE_NAMESPACE="${MARKETPLACE_NAMESPACE:-openshift-marketplace}"
 GLOBAL_NAMESPACE="${GLOBAL_NAMESPACE:-$globalNamespace}"
 CNV_VERSION="${CNV_VERSION:-2.1.0}"
-TOKEN="${TOKEN:-}"
+QUAY_TOKEN="${QUAY_TOKEN:-}"
 
 RETRIES="${RETRIES:-10}"
 
@@ -28,18 +28,18 @@ if [ "${CLUSTER}" == "KUBERNETES" ]; then
     MARKETPLACE_NAMESPACE="marketplace"
 fi
 
-if [ -z "${TOKEN}" ]; then
+if [ -z "${QUAY_TOKEN}" ]; then
     if [ -z "${QUAY_USERNAME}" ]; then
-	echo "QUAY_USERNAME"
-	read QUAY_USERNAME
+	echo "QUAY_USERNAME is unset"
+	exit 1
     fi
 
     if [ -z "${QUAY_PASSWORD}" ]; then
-	echo "QUAY_PASSWORD"
-	read -s QUAY_PASSWORD
+	echo "QUAY_PASSWORD is unset"
+	exit 1
     fi
 
-    TOKEN=$(curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api/v1/users/login -d '
+    QUAY_TOKEN=$(curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api/v1/users/login -d '
 {
     "user": {
         "username": "'"${QUAY_USERNAME}"'",
@@ -47,9 +47,9 @@ if [ -z "${TOKEN}" ]; then
     }
 }' | jq -r '.token')
 
-    echo $TOKEN
-    if [ "${TOKEN}" == "null" ]; then
-	echo "TOKEN was 'null'.  Did you enter the correct quay Username & Password?"
+    echo $QUAY_TOKEN
+    if [ "${QUAY_TOKEN}" == "null" ]; then
+	echo "QUAY_TOKEN was 'null'.  Did you enter the correct quay Username & Password?"
 	exit 1
     fi
 fi
@@ -63,7 +63,7 @@ metadata:
   namespace: "${MARKETPLACE_NAMESPACE}"
 type: Opaque
 stringData:
-      token: "$TOKEN"
+      token: "$QUAY_TOKEN"
 EOF
 
 echo "Creating OperatorGroup"
