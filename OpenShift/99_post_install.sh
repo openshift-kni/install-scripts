@@ -211,7 +211,7 @@ function link-machine-and-node () {
 
 function add-machine-ips() {
 
-  CLUSTER_NAME=$(hostname -f | cut -d'.' -f 2)
+	CLUSTER_NAME=$(oc --config ocp/auth/kubeconfig get machines -n openshift-machine-api --no-headers -o jsonpath="{['items'][0]['metadata']['labels']['machine\.openshift\.io/cluster-api-cluster']}")
 
   for node_name in $(oc get nodes -o template --template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'); do
       machine_name="${CLUSTER_NAME-}-$(echo ${node_name} | grep -oE "(master|worker)-[0-9]+")"
