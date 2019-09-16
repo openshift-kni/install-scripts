@@ -2,7 +2,7 @@
 set -x
 set -e
 
-export CLUSTER_NAME=$(hostname -f | cut -d'.' -f 2)
+export CLUSTER_NAME=$(oc --config ocp/auth/kubeconfig get machines -n openshift-machine-api --no-headers -o jsonpath="{['items'][0]['metadata']['labels']['machine\.openshift\.io/cluster-api-cluster']}")
 
 for node in $(oc --config ocp/auth/kubeconfig get nodes -o template --template='{{range .items}}{{.metadata.uid}}:{{.metadata.name}}{{"\n"}}{{end}}'); do
     node_name=$(echo $node | cut -f2 -d':')
