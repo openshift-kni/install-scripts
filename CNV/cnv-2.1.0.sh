@@ -16,6 +16,7 @@ MARKETPLACE_NAMESPACE="${MARKETPLACE_NAMESPACE:-openshift-marketplace}"
 GLOBAL_NAMESPACE="${GLOBAL_NAMESPACE:-$globalNamespace}"
 CNV_VERSION="${CNV_VERSION:-2.1.0}"
 QUAY_TOKEN="${QUAY_TOKEN:-}"
+APPROVAL="${APPROVAL:-Manual}"
 
 RETRIES="${RETRIES:-10}"
 
@@ -137,7 +138,7 @@ spec:
   name: kubevirt-hyperconverged
   startingCSV: "kubevirt-hyperconverged-operator.v${CNV_VERSION}"
   channel: "${CNV_VERSION}"
-  installPlanApproval: Manual
+  installPlanApproval: "${APPROVAL}"
 EOF
 
 echo "Give OLM 60 seconds to process the subscription..."
