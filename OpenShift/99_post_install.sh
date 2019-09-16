@@ -205,6 +205,8 @@ function link-machine-and-node () {
 
   oc --config ocp/auth/kubeconfig get baremetalhost -n openshift-machine-api -o yaml "${host}"
 
+  kill_proxy
+
 }
 
 function add-machine-ips() {
