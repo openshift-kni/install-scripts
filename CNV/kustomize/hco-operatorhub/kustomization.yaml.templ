@@ -1,0 +1,9 @@
+# Deploy hco operator with default options
+# to namespace ${TARGET_NAMESPACE}
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- hco.yaml
+
+namespace: ${TARGET_NAMESPACE}
