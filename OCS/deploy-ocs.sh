@@ -42,11 +42,6 @@ fi
 if [ "${osd_devices}" == "" ]; then
   echo You need to define osd_devices
   exit 1
-elif [ "${osd_size}" == "" ]; then
-  echo You need to define osd_size
-  exit 1
-else
- echo Using osd_devices ${osd_devices} of size ${osd_size}
 fi
 
 # Size number for osd pvcs
@@ -55,6 +50,13 @@ if [[ -z "${osd_size}" ]]; then
   first_osd_size_bytes=$(lsblk -p -d -n -o size -b $(echo $osd_devices | cut -d , -f1))
   export osd_size="$(( $first_osd_size_bytes/1024/1024/1024 ))"
 fi
+
+if [ "${osd_size}" == "" ]; then
+  echo You need to define osd_size
+  exit 1
+fi
+
+echo Using osd_devices ${osd_devices} of size ${osd_size}
 
 oc create -f https://raw.githubusercontent.com/openshift/ocs-operator/${ocs_version}/deploy/deploy-with-olm.yaml
 
