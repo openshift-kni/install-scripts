@@ -15,6 +15,7 @@ CLUSTER="${CLUSTER:-OPENSHIFT}"
 MARKETPLACE_NAMESPACE="${MARKETPLACE_NAMESPACE:-openshift-marketplace}"
 GLOBAL_NAMESPACE="${GLOBAL_NAMESPACE:-$globalNamespace}"
 CNV_VERSION="${CNV_VERSION:-2.1.0}"
+TOKEN="${TOKEN:-}"
 
 RETRIES="${RETRIES:-10}"
 
@@ -27,17 +28,18 @@ if [ "${CLUSTER}" == "KUBERNETES" ]; then
     MARKETPLACE_NAMESPACE="marketplace"
 fi
 
-if [ -z "${QUAY_USERNAME}" ]; then
-    echo "QUAY_USERNAME"
-    read QUAY_USERNAME
-fi
+if [ -z "${TOKEN}" ]; then
+    if [ -z "${QUAY_USERNAME}" ]; then
+	echo "QUAY_USERNAME"
+	read QUAY_USERNAME
+    fi
 
-if [ -z "${QUAY_PASSWORD}" ]; then
-    echo "QUAY_PASSWORD"
-    read -s QUAY_PASSWORD
-fi
+    if [ -z "${QUAY_PASSWORD}" ]; then
+	echo "QUAY_PASSWORD"
+	read -s QUAY_PASSWORD
+    fi
 
-TOKEN=$(curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api/v1/users/login -d '
+    TOKEN=$(curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api/v1/users/login -d '
 {
     "user": {
         "username": "'"${QUAY_USERNAME}"'",
@@ -45,10 +47,11 @@ TOKEN=$(curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api
     }
 }' | jq -r '.token')
 
-echo $TOKEN
-if [ "${TOKEN}" == "null" ]; then
-   echo "TOKEN was 'null'.  Did you enter the correct quay Username & Password?"
-   exit 1
+    echo $TOKEN
+    if [ "${TOKEN}" == "null" ]; then
+	echo "TOKEN was 'null'.  Did you enter the correct quay Username & Password?"
+	exit 1
+    fi
 fi
 
 echo "Creating registry secret"
