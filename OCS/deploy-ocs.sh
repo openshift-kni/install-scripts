@@ -38,12 +38,6 @@ export mon_size="${mon_size:-5}"
 if [[ -z "${osd_devices}" ]]; then
   export osd_devices="$(lsblk -p -d -n -o name -I8,259 | tail -n +2 | paste -s -d ',')"
 fi
-# Size number for osd pvcs
-# If osd_size var not found calculate it based on the first osd disk size found on deploy host
-if [[ -z "${osd_size}" ]]; then
-  first_osd_size_bytes=$(lsblk -p -d -n -o size -b $(echo $osd_devices | cut -d , -f1))
-  export osd_size="$(( $first_osd_size_bytes/1024/1024/1024 ))"
-fi
 
 if [ "${osd_devices}" == "" ]; then
   echo You need to define osd_devices
@@ -53,6 +47,13 @@ elif [ "${osd_size}" == "" ]; then
   exit 1
 else
  echo Using osd_devices ${osd_devices} of size ${osd_size}
+fi
+
+# Size number for osd pvcs
+# If osd_size var not found calculate it based on the first osd disk size found on deploy host
+if [[ -z "${osd_size}" ]]; then
+  first_osd_size_bytes=$(lsblk -p -d -n -o size -b $(echo $osd_devices | cut -d , -f1))
+  export osd_size="$(( $first_osd_size_bytes/1024/1024/1024 ))"
 fi
 
 oc create -f https://raw.githubusercontent.com/openshift/ocs-operator/${ocs_version}/deploy/deploy-with-olm.yaml
