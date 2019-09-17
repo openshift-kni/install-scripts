@@ -17,8 +17,12 @@ CNV_VERSION="${CNV_VERSION:-2.1.0}"
 RETRIES="${RETRIES:-10}"
 
 # Registry Auth
-QUAY_USERNAME
-QUAY_PASSWORD
+#
+# Get your pull secret from: https://cloud.redhat.com/openshift/install#pull-secret
+#   $ export TOKEN=$(cat <pull-secret-file> | jq -r .auths.\"quay.io\".auth)
+# You can also get the token with a user and password
+#   $ curl https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/tools/token.sh | bash
+TOKEN=$TOKEN
 ```
 
 ## Running vms with bridges

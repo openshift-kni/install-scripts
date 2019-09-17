@@ -15,6 +15,8 @@ CLUSTER="${CLUSTER:-OPENSHIFT}"
 MARKETPLACE_NAMESPACE="${MARKETPLACE_NAMESPACE:-openshift-marketplace}"
 GLOBAL_NAMESPACE="${GLOBAL_NAMESPACE:-$globalNamespace}"
 CNV_VERSION="${CNV_VERSION:-2.1.0}"
+QUAY_TOKEN="${QUAY_TOKEN:-}"
+APPROVAL="${APPROVAL:-Manual}"
 
 RETRIES="${RETRIES:-10}"
 
@@ -27,17 +29,18 @@ if [ "${CLUSTER}" == "KUBERNETES" ]; then
     MARKETPLACE_NAMESPACE="marketplace"
 fi
 
-if [ -z "${QUAY_USERNAME}" ]; then
-    echo "QUAY_USERNAME"
-    read QUAY_USERNAME
-fi
+if [ -z "${QUAY_TOKEN}" ]; then
+    if [ -z "${QUAY_USERNAME}" ]; then
+	echo "QUAY_USERNAME is unset"
+	exit 1
+    fi
 
-if [ -z "${QUAY_PASSWORD}" ]; then
-    echo "QUAY_PASSWORD"
-    read -s QUAY_PASSWORD
-fi
+    if [ -z "${QUAY_PASSWORD}" ]; then
+	echo "QUAY_PASSWORD is unset"
+	exit 1
+    fi
 
-TOKEN=$(curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api/v1/users/login -d '
+    QUAY_TOKEN=$(curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api/v1/users/login -d '
 {
     "user": {
         "username": "'"${QUAY_USERNAME}"'",
@@ -45,10 +48,11 @@ TOKEN=$(curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api
     }
 }' | jq -r '.token')
 
-echo $TOKEN
-if [ "${TOKEN}" == "null" ]; then
-   echo "TOKEN was 'null'.  Did you enter the correct quay Username & Password?"
-   exit 1
+    echo $QUAY_TOKEN
+    if [ "${QUAY_TOKEN}" == "null" ]; then
+	echo "QUAY_TOKEN was 'null'.  Did you enter the correct quay Username & Password?"
+	exit 1
+    fi
 fi
 
 echo "Creating registry secret"
@@ -60,7 +64,7 @@ metadata:
   namespace: "${MARKETPLACE_NAMESPACE}"
 type: Opaque
 stringData:
-      token: "$TOKEN"
+      token: "$QUAY_TOKEN"
 EOF
 
 echo "Creating OperatorGroup"
@@ -134,7 +138,7 @@ spec:
   name: kubevirt-hyperconverged
   startingCSV: "kubevirt-hyperconverged-operator.v${CNV_VERSION}"
   channel: "${CNV_VERSION}"
-  installPlanApproval: Manual
+  installPlanApproval: "${APPROVAL}"
 EOF
 
 echo "Give OLM 60 seconds to process the subscription..."
