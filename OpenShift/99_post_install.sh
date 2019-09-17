@@ -205,7 +205,11 @@ function link-machine-and-node () {
 
   oc --config ocp/auth/kubeconfig get baremetalhost -n openshift-machine-api -o yaml "${host}"
 
+  # stop proxy
   kill_proxy
+
+  # reset trap
+  trap - EXIT SIGINT
 
 }
 
