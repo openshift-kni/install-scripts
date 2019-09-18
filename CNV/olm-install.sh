@@ -103,7 +103,7 @@ echo ">>> Creating operatorgroup ${TARGET_NAMESPACE}-group"
 if ! `oc get operatorgroup ${TARGET_NAMESPACE}-group -n ${TARGET_NAMESPACE} &>/dev/null` ; then
   if [[ ${NAMESPACED_SUBSCR} ]]; then
 
-    echo "Creating OperatorGroup"
+    echo ">>> Creating OperatorGroup for target namespaces ${TARGET_NAMESPACE}"
     cat <<EOF | oc create -f - || true
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
@@ -115,6 +115,8 @@ spec:
   - ${TARGET_NAMESPACE}
 EOF
 else
+
+    echo ">>> Creating global OperatorGroup"
     cat <<EOF | oc create -f - || true
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
