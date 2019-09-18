@@ -158,5 +158,6 @@ kind: HyperConverged
 metadata:
   name: hyperconverged-cluster
   namespace: "${TARGET_NAMESPACE}"
-spec: {}
+spec:
+  BareMetalPlatform: true
 EOF
