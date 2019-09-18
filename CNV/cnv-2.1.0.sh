@@ -15,6 +15,7 @@ CLUSTER="${CLUSTER:-OPENSHIFT}"
 MARKETPLACE_NAMESPACE="${MARKETPLACE_NAMESPACE:-openshift-marketplace}"
 GLOBAL_NAMESPACE="${GLOBAL_NAMESPACE:-$globalNamespace}"
 CNV_VERSION="${CNV_VERSION:-2.1.0}"
+CNV_CHANNEL="${CNV_VERSION:0:3}"
 QUAY_TOKEN="${QUAY_TOKEN:-}"
 APPROVAL="${APPROVAL:-Manual}"
 
@@ -137,7 +138,7 @@ spec:
   sourceNamespace: "${GLOBAL_NAMESPACE}"
   name: kubevirt-hyperconverged
   startingCSV: "kubevirt-hyperconverged-operator.v${CNV_VERSION}"
-  channel: "${CNV_VERSION}"
+  channel: "${CNV_CHANNEL}"
   installPlanApproval: "${APPROVAL}"
 EOF
 
