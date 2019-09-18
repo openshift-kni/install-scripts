@@ -144,7 +144,7 @@ EOF
 echo "Give OLM 60 seconds to process the subscription..."
 sleep 60
 
-oc get installplan -o yaml -n "${TARGET_NAMESPACE}" $(oc get installplan -n "${TARGET_NAMESPACE}" --no-headers | grep kubevirt-hyperconverged-operator.v"{CNV_VERSION}" | awk '{print $1}') | sed 's/approved: false/approved: true/' | oc apply -n "${TARGET_NAMESPACE}" -f -
+oc get installplan -o yaml -n "${TARGET_NAMESPACE}" $(oc get installplan -n "${TARGET_NAMESPACE}" --no-headers | grep "kubevirt-hyperconverged-operator.v${CNV_VERSION}" | awk '{print $1}') | sed 's/approved: false/approved: true/' | oc apply -n "${TARGET_NAMESPACE}" -f -
 
 echo "Give OLM 60 seconds to process the installplan..."
 sleep 60
