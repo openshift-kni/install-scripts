@@ -61,7 +61,7 @@
         dhcpipnet=`/usr/bin/ipcalc -n $dhcpip/$extcidr |cut -f2 -d=`
         extipnet=`/usr/bin/ipcalc -n $extip/$extcidr |cut -f2 -d=`
         if [ $dhcpip == $extip ] && [ $dhcpipnet == $extipnet ] && [ $extnet == $extipnet ]; then dnstat="Success"; else dnstat="Failed"; fi
-        if (echo "{{ inventory_hostname }}"|grep -q master); then echo "{{ inventory_hostname }} name={{ inventory_hostname }} role=master ipmi_username={{ bmcuser }} ipmi_password={{ bmcpassword }} ipmi_address={{ bmcip }} mac=$macaddress disk=59">>hosts; fi
+        if (echo "{{ inventory_hostname }}"|grep -q master); then echo "{{ inventory_hostname }} name={{ inventory_hostname }} role=master ipmi_username={{ bmcuser }} ipmi_password={{ bmcpassword }} ipmi_address={{ bmcip }} mac=$macaddress disk=59 nicnum=$nicnum">>hosts; fi
         if (echo "{{ inventory_hostname }}"|grep -q worker-0); then intip=`ip -f inet a show provisioning|sed -En -e 's/.*inet ([0-9.]+).*/\1/p'`; fi
         cat << EOF >> dhcps
         {{ inventory_hostname }}.{{ cluster }}.{{ domain }}  $extmacaddress  $extip  External  $dnstat
