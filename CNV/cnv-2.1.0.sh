@@ -15,6 +15,7 @@ CLUSTER="${CLUSTER:-OPENSHIFT}"
 MARKETPLACE_NAMESPACE="${MARKETPLACE_NAMESPACE:-openshift-marketplace}"
 GLOBAL_NAMESPACE="${GLOBAL_NAMESPACE:-$globalNamespace}"
 CNV_VERSION="${CNV_VERSION:-2.1.0}"
+CNV_CHANNEL="${CNV_VERSION:0:3}"
 QUAY_TOKEN="${QUAY_TOKEN:-}"
 APPROVAL="${APPROVAL:-Manual}"
 
@@ -137,14 +138,14 @@ spec:
   sourceNamespace: "${GLOBAL_NAMESPACE}"
   name: kubevirt-hyperconverged
   startingCSV: "kubevirt-hyperconverged-operator.v${CNV_VERSION}"
-  channel: "${CNV_VERSION}"
+  channel: "${CNV_CHANNEL}"
   installPlanApproval: "${APPROVAL}"
 EOF
 
 echo "Give OLM 60 seconds to process the subscription..."
 sleep 60
 
-oc get installplan -o yaml -n "${TARGET_NAMESPACE}" $(oc get installplan -n "${TARGET_NAMESPACE}" --no-headers | grep kubevirt-hyperconverged-operator.v"{CNV_VERSION}" | awk '{print $1}') | sed 's/approved: false/approved: true/' | oc apply -n "${TARGET_NAMESPACE}" -f -
+oc get installplan -o yaml -n "${TARGET_NAMESPACE}" $(oc get installplan -n "${TARGET_NAMESPACE}" --no-headers | grep "kubevirt-hyperconverged-operator.v${CNV_VERSION}" | awk '{print $1}') | sed 's/approved: false/approved: true/' | oc apply -n "${TARGET_NAMESPACE}" -f -
 
 echo "Give OLM 60 seconds to process the installplan..."
 sleep 60

@@ -12,13 +12,14 @@
 source ../common/logging.sh
 
 howto(){
-  echo "Usage: preflight.sh -u username -p password -m master-0-ip,master-1-ip,master-2-ip -w worker-0-ip,worker-1-ip"
+  echo "Usage: preflight.sh -u username -p password -m master-0-ip,master-1-ip,master-2-ip -w worker-0-ip,worker-1-ip -o (power off nodes)"
   echo "Example: preflight.sh -u root -p calvin -m 172.22.0.231,172.22.0.232,172.22.0.233 -w 172.22.0.234"
   echo "Example: preflight.sh -u root -p calvin -d (use default settings where switches are not specified)"
 }
 
 df=0
-while getopts u:p:m:w:dh option
+power=0
+while getopts u:p:m:w:doh option
 do
 case "${option}"
 in
@@ -27,6 +28,7 @@ p) dracpassword=${OPTARG};;
 m) mip=${OPTARG};;
 w) wip=${OPTARG};;
 d) df=1;;
+o) power=1;;
 h) howto; exit 0;;
 \?) howto; exit 1;;
 esac
@@ -66,6 +68,13 @@ if ([ -z "$wip" ] && [ "$df" -eq "1" ]) then
    wip="172.22.0.234"
 fi
 
+if ([ "$power" -eq "1" ]) then
+   export power
+   powerstatus="Nodes will be powered off before deployment..."
+else
+   powerstatus="Nodes will not be powered off before deployment..."
+fi
+
 if ([ "$df" -eq "1" ]) then
    dfstatus="Using defaults where no arguments provided..."
 else
@@ -90,6 +99,7 @@ fi
 ##################################################################
 
 echo $dfstatus
+echo $powerstatus
 echo -n Discovering Cluster Name and Domain...
 bootstrapip=`ip addr show baremetal| grep 'inet ' | cut -d/ -f1 | awk '{ print $2}'`
 dnsname=`nslookup $bootstrapip|grep name| cut -d= -f2|sed s'/^ //'g|sed s'/.$//g'`
