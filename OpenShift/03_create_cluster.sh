@@ -80,6 +80,55 @@ function get_provision_if() {
   fi
 }
 
+function gen_metal3_config() {
+  fname=${0}
+
+  RHCOS_IMAGE_URL=""
+  PROVISIONING_INTERFACE="eno1"
+  PROVISIONING_ADDRESS="172.22.0.3"
+  CACHE_URL="http://172.22.0.1/images"
+
+  while [[ $# -gt 0 ]]; do
+    switchopt=${1}
+    case ${switchopt} in
+     -i)
+       PROVISIONING_INTERFACE=${2}
+       shift
+       ;;
+     -u)
+       RHCOS_IMAGE_URL=${2}
+       shift
+       ;;
+     -c)
+       CACHE_URL=${2}
+       shift
+       ;;
+      *)
+       echo "Ignoring: function ${fname} encountered unrecognized argument: ${switchopt}" 1>&2
+    esac
+    shift
+  done
+
+  cat - <<EOCM
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: metal3-config
+  namespace: openshift-machine-api
+data:
+  http_port: "6180"
+  provisioning_interface: "${PROVISIONING_INTERFACE}"
+  provisioning_ip: "${PROVISIONING_ADDRESS}/24"
+  dhcp_range: "172.22.0.10,172.22.0.100"
+  deploy_kernel_url: "http://${PROVISIONING_ADDRESS}:6180/images/ironic-python-agent.kernel"
+  deploy_ramdisk_url: "http://${PROVISIONING_ADDRESS}:6180/images/ironic-python-agent.initramfs"
+  ironic_endpoint: "http://${PROVISIONING_ADDRESS}:6385/v1/"
+  ironic_inspector_endpoint: "http://${PROVISIONING_ADDRESS}:5050/v1/"
+  cache_url: "${CACHE_URL}"
+  rhcos_image_url: "${RHCOS_IMAGE_URL}"
+EOCM
+}
+
 function cache_images() {
   
   # Either pull or build the ironic images
@@ -119,6 +168,7 @@ function cache_images() {
   while ! curl --fail http://localhost/images/rhcos-ootpa-latest.qcow2.md5sum ; do sleep 5 ; done
 }
 
+
 if [ ! -f install-config.yaml ]; then
     echo "Please create install-config.yaml"
     exit 1
@@ -151,7 +201,7 @@ fi
 
 cp install-config.yaml ocp/
 get_provision_if
-./gen_metal3_config.sh -u ${RHCOS_IMAGE_URL} -i ${INTERNAL_NIC} > assets/deploy/99-metal3-config-map.yaml
+gen_metal3_config -u ${RHCOS_IMAGE_URL} -i ${INTERNAL_NIC} > assets/deploy/99-metal3-config-map.yaml
 ${OPENSHIFT_INSTALLER} --dir ocp --log-level=${LOGLEVEL} create manifests
 for file in $(find assets/deploy/ -iname '*.yaml' -type f -printf "%P\n"); do
     cp assets/deploy/${file} ocp/openshift/${file}
