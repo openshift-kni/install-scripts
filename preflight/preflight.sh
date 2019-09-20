@@ -150,7 +150,7 @@ echo "Success"
 echo -n "Determining external network CIDR..."
 BARNET=`/usr/bin/ipcalc -n "$(/usr/sbin/ip -o addr show|grep baremetal|grep -v inet6|awk {'print $4'})"|cut -f2 -d=`
 BARCIDR=`/usr/bin/ipcalc -p "$(/usr/sbin/ip -o addr show|grep baremetal|grep -v inet6|awk {'print $4'})"|cut -f2 -d=`
-wc=$((wc-1))
+wc=$((wc-1)) # reducing worker count by 1 since we don't use provisioning node 
 echo '[bootstrap]'>>hosts
 echo localhost>>hosts
 echo '[bootstrap:vars]'>>hosts
