@@ -122,23 +122,25 @@ echo "Success"
 
 echo -n "Creating initial host inventory file..."
 echo [bmcs]>hosts
-c=0
+mc=0
 for ipaddr in "${mipaddresses[@]}"
 do
-   echo "master-$c bmcip=$ipaddr">>hosts
-   c=$((c+1))
+   echo "master-$mc bmcip=$ipaddr">>hosts
+   mc=$((mc+1))
 done
-c=0
+wc=0
 for ipaddr in "${wipaddresses[@]}"
 do
-   echo "worker-$c bmcip=$ipaddr">>hosts
-   c=$((c+1))
+   echo "worker-$wc bmcip=$ipaddr">>hosts
+   wc=$((wc+1))
 done
 echo [bmcs:vars]>>hosts
 echo bmcuser=$dracuser>>hosts
 echo bmcpassword=$dracpassword>>hosts
 echo domain=$domain>>hosts
 echo cluster=$clustername>>hosts
+echo mastercount=$mc>>hosts
+echo workercount=$wc>>hosts
 echo "Success"
 
 #################################################################
@@ -148,12 +150,13 @@ echo "Success"
 echo -n "Determining external network CIDR..."
 BARNET=`/usr/bin/ipcalc -n "$(/usr/sbin/ip -o addr show|grep baremetal|grep -v inet6|awk {'print $4'})"|cut -f2 -d=`
 BARCIDR=`/usr/bin/ipcalc -p "$(/usr/sbin/ip -o addr show|grep baremetal|grep -v inet6|awk {'print $4'})"|cut -f2 -d=`
+wc=$((wc-1))
 echo '[bootstrap]'>>hosts
 echo localhost>>hosts
 echo '[bootstrap:vars]'>>hosts
 echo extcidrnet=$BARNET/$BARCIDR>>hosts
-echo numworkers=0>>hosts
-echo nummasters=3>>hosts
+echo numworkers=$wc>>hosts
+echo nummasters=$mc>>hosts
 echo "Success"
 
 ##################################################################
