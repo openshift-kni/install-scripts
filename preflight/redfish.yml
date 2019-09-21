@@ -16,7 +16,7 @@
     - name: Copy Results to Output File
       copy:
         content: "{{ result | to_nice_json }}"
-        dest: "{{inventory_hostname}}.hwprofile.json"
+        dest: "{{inventory_hostname}}.hwprofile.json.tmp"
       delegate_to: localhost
 
     - name: Add Additional Lines to Dynamic Host Inventory File
@@ -51,9 +51,27 @@
     - name: Add Master Hosts Lines To Inventory and Perform DHCP/DNS Validations
       shell: |
         intip="Unassigned"
-        macaddress=`jq -r '.ansible_facts.redfish_facts.nic.entries[0][1][]|select(.Description=="Integrated NIC 1 Port 1 Partition 1")|.PermanentMACAddress' {{inventory_hostname}}.hwprofile.json`
-        extmacaddress=`jq -r '.ansible_facts.redfish_facts.nic.entries[0][1][]|select(.Description=="Integrated NIC 1 Port 2 Partition 1")|.PermanentMACAddress' {{inventory_hostname}}.hwprofile.json`
-        nicnum=`grep NIC {{inventory_hostname}}.hwprofile.json | grep Description| grep -Fn "Integrated NIC 1 Port 1 Partition 1"|awk -F: {'print $1'} | awk '{print $0-1}'`
+        if (echo {{ inventory_hostname }}|grep -q worker); then
+           wcount=`cat /tmp/wcount.tmp`
+           intip="Unassigned"
+           macaddress=`jq -r '.ansible_facts.redfish_facts.nic.entries[0][1][]|select(.Description=="Integrated NIC 1 Port 1 Partition 1")|.PermanentMACAddress' {{ inventory_hostname }}.hwprofile.json.tmp`
+           if (ip a| tr [:lower:] [:upper:]|grep -q $macaddress); then
+              nodename=worker-$(({{ workercount }}-1))
+              intip=`ip -f inet a show provisioning|sed -En -e 's/.*inet ([0-9.]+).*/\1/p'`
+              mv {{ inventory_hostname }}.hwprofile.json.tmp $nodename.hwprofile.json
+           else
+              nodename=worker-$wcount
+              wcount=$(($wcount+1))
+              echo "$wcount">/tmp/wcount.tmp
+              mv {{ inventory_hostname }}.hwprofile.json.tmp $nodename.hwprofile.json
+           fi
+        else
+           nodename={{ inventory_hostname }}
+           mv {{ inventory_hostname }}.hwprofile.json.tmp $nodename.hwprofile.json
+        fi
+        macaddress=`jq -r '.ansible_facts.redfish_facts.nic.entries[0][1][]|select(.Description=="Integrated NIC 1 Port 1 Partition 1")|.PermanentMACAddress' $nodename.hwprofile.json`
+        extmacaddress=`jq -r '.ansible_facts.redfish_facts.nic.entries[0][1][]|select(.Description=="Integrated NIC 1 Port 2 Partition 1")|.PermanentMACAddress' $nodename.hwprofile.json`
+        nicnum=`grep NIC $nodename.hwprofile.json | grep Description| grep -Fn "Integrated NIC 1 Port 1 Partition 1"|awk -F: {'print $1'} | awk '{print $0-1}'`
         dhcpip=`./check_dhcp.py -m $extmacaddress|grep Offered|cut -f2 -d:|sed "s/ //g"`
         extip=`getent hosts {{ inventory_hostname }}.{{ cluster }}.{{ domain }}|awk {'print $1'}`
         extnet=`/usr/bin/ipcalc -n "$(/usr/sbin/ip -o addr show|grep baremetal|grep -v inet6|awk {'print $4'})"|cut -f2 -d=`
@@ -61,11 +79,18 @@
         dhcpipnet=`/usr/bin/ipcalc -n $dhcpip/$extcidr |cut -f2 -d=`
         extipnet=`/usr/bin/ipcalc -n $extip/$extcidr |cut -f2 -d=`
         if [ $dhcpip == $extip ] && [ $dhcpipnet == $extipnet ] && [ $extnet == $extipnet ]; then dnstat="Success"; else dnstat="Failed"; fi
-        if (echo "{{ inventory_hostname }}"|grep -q master); then echo "{{ inventory_hostname }} name={{ inventory_hostname }} role=master ipmi_username={{ bmcuser }} ipmi_password={{ bmcpassword }} ipmi_address={{ bmcip }} mac=$macaddress disk=59 nicnum=$nicnum">>hosts; fi
-        if (echo "{{ inventory_hostname }}"|grep -q worker-0); then intip=`ip -f inet a show provisioning|sed -En -e 's/.*inet ([0-9.]+).*/\1/p'`; fi
+        if (echo "$nodename"|grep -q master); then
+           echo "$nodename name=$nodename role=master ipmi_username={{ bmcuser }} ipmi_password={{ bmcpassword }} ipmi_address={{ bmcip }} mac=$macaddress disk=59 nicnum=$nicnum">>hosts
+        else
+           if [ $nodename == "worker-$(({{ workercount }}-1))" ]; then
+              echo "$nodename name=$nodename role=provisioner ipmi_username={{ bmcuser }} ipmi_password={{ bmcpassword }} ipmi_address={{ bmcip }} mac=$macaddress disk=59 nicnum=$nicnum">>hosts.provision
+           else
+              echo "$nodename name=$nodename role=worker ipmi_username={{ bmcuser }} ipmi_password={{ bmcpassword }} ipmi_address={{ bmcip }} mac=$macaddress disk=59 nicnum=$nicnum">>hosts.worker
+           fi
+        fi
         cat << EOF >> dhcps
-        {{ inventory_hostname }}.{{ cluster }}.{{ domain }}  $extmacaddress  $extip  External  $dnstat
-        {{ inventory_hostname }}.{{ cluster }}.{{ domain }}  $macaddress  $intip  Internal  Success
+        $nodename.{{ cluster }}.{{ domain }}  $extmacaddress  $extip  External  $dnstat
+        $nodename.{{ cluster }}.{{ domain }}  $macaddress  $intip  Internal  Success
         EOF
       delegate_to: localhost
 
