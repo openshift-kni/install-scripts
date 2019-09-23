@@ -1,8 +1,0 @@
-DEVICE=${bridge}
-NAME=${bridge}
-TYPE=Bridge
-ONBOOT=yes
-NM_CONTROLLED=yes
-BOOTPROTO=dhcp
-BRIDGING_OPTS=vlan_filtering=1
-BRIDGE_VLANS="1 pvid untagged,20,300-400 untagged"

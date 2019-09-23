@@ -162,3 +162,6 @@ metadata:
 spec:
   BareMetalPlatform: true
 EOF
+
+echo "Waiting for HCO to get fully deployed"
+oc wait -n ${TARGET_NAMESPACE} hyperconverged hyperconverged-cluster --for condition=Available --timeout=10m

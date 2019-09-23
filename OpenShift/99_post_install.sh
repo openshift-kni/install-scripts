@@ -8,31 +8,7 @@ source common.sh
 export KUBECONFIG=${KUBECONFIG:-ocp/auth/kubeconfig}
 POSTINSTALL_ASSETS_DIR="./assets/post-install"
 IFCFG_INTERFACE="${POSTINSTALL_ASSETS_DIR}/ifcfg-interface.template"
-IFCFG_BRIDGE="${POSTINSTALL_ASSETS_DIR}/ifcfg-bridge.template"
-BREXT_FILE="${POSTINSTALL_ASSETS_DIR}/99-brext-master.yaml"
 MACHINE_DATA_PATCH_DIR="../preflight"
-
-export bridge="${bridge:-brext}"
-
-create_bridge(){
-  echo "Deploying Bridge ${bridge}..."
-
-  FIRST_MASTER=$(oc get node -o custom-columns=IP:.status.addresses[0].address --no-headers | head -1)
-  export interface=$(ssh -q -o StrictHostKeyChecking=no core@$FIRST_MASTER "ip r | grep default | grep -Po  '(?<=dev )(\S+)'")
-  if [ "$interface" == "" ] ; then
-    echo "Issue detecting interface to use! Leaving..."
-    exit 1
-  fi
-  if [ "$interface" != "$bridge" ] ; then
-    echo "Using interface $interface"
-    export interface_content=$(envsubst < ${IFCFG_INTERFACE} | base64 -w0)
-    export bridge_content=$(envsubst < ${IFCFG_BRIDGE} | base64 -w0)
-    envsubst < ${BREXT_FILE}.template > ${BREXT_FILE}
-    echo "Done creating bridge definition"
-  else
-    echo "Bridge already there!"
-  fi
-}
 
 apply_mc(){
   # Disable auto reboot hosts in order to apply several mcos at the same time
@@ -229,6 +205,5 @@ function add-machine-ips() {
 }
 
 add-machine-ips
-create_bridge
 create_ntp_config
 apply_mc

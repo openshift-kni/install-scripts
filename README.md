@@ -83,10 +83,12 @@ The deployment process will use scripts to perform the following on the configur
    (#5)](https://github.com/openshift-kni/install-scripts/issues/5)
    for image storage.
 1. [Deploy
-   CNV](https://github.com/openshift-kni/install-scripts/blob/master/CNV/deploy-cnv.sh). [Configure
-   a bridge on the `External` interface on OpenShift nodes
-   (#18)](https://github.com/openshift-kni/install-scripts/issues/18)
-   to allow VMs access this network.
+   CNV](https://github.com/openshift-kni/install-scripts/blob/master/CNV/deploy-cnv.sh).
+1. [Configure host
+   networking](https://github.com/openshift-kni/install-scripts/blob/master/CNV/configure-network.sh)
+   by running `cd CNV && ./configure-network.sh`. That will create a linux
+   bridge on top of the default interface. Please note that when a new node is
+   added, the configuration script has to be retriggered.
 1. Temporarily install Ripsaw, carry out some performance tests, and
    capture the results.
 
