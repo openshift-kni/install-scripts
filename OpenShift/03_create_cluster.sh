@@ -72,7 +72,7 @@ function rhcos_image_url() {
 function get_provision_if() {
   #Dont do anything if there is a value already set
   if [[ -z "${INTERNAL_NIC}" ]]; then
-    lshw -quiet -class network | grep -A 1 "bus info" | grep name | awk -F': ' '{print $2}'|grep e | while read interface; do
+    for interface in $( sudo lshw -quiet -class network | grep -A 1 "bus info" | grep name | awk -F': ' '{print $2}'|grep e ); do
       if (`ip a|grep $interface|grep provisioning>/dev/null 2>&1`); then
         INTERNAL_NIC="$interface"
       fi
