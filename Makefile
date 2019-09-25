@@ -3,11 +3,11 @@
 
 default: appliance
 
-appliance: preflight OpenShift OCS CNV bell
+appliance: preflight OpenShift CNV OCS bell
 
-rhel: prep OpenShift OCS CNV bell
+rhel: prep OpenShift CNV OCS bell
 
-deploy: OpenShift OCS CNV bell
+deploy: OpenShift CNV OCS bell
 
 prep:
 	set -e; pushd OpenShift; make pre_install; popd
