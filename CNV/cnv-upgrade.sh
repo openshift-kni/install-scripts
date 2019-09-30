@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -ex
+source ../common/logging.sh
 
 OLD_CNV_VERSION="${OLD_CNV_VERSION:-2.0.0}"
 CNV_VERSION="${CNV_VERSION:-2.1.0}"
