@@ -1,4 +1,8 @@
 #!/bin/bash
+
+set -ex
+source ../common/logging.sh
+
 ocs_version="${ocs_version:-release-4.2}"
 NAMESPACE="openshift-storage"
 LOCALNAMESPACE="local-storage"
