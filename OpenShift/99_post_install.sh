@@ -19,8 +19,17 @@ apply_mc(){
   # Add extra registry if needed (this applies clusterwide)
   # https://docs.openshift.com/container-platform/4.1/openshift_images/image-configuration.html#images-configuration-insecure_image-configuration
   if [ "${EXTRA_REGISTRY}" != "" ] ; then
-    echo "Adding ${EXTRA_REGISTRY}..."
-    oc patch image.config.openshift.io/cluster --type merge --patch "{\"spec\":{\"registrySources\":{\"insecureRegistries\":[\"${EXTRA_REGISTRY}\"]}}}"
+    _registry=''
+    _oldifs=${IFS}
+    IFS=';'
+
+    for i in ${EXTRA_REGISTRY};do
+        echo "Adding ${_registry}..."
+        _registry="${_registry},\"${i}\""
+    done
+
+    oc patch image.config.openshift.io/cluster --type merge --patch "{\"spec\":{\"registrySources\":{\"insecureRegistries\":[${_registry#,}]}}}"
+    IFS=${_oldifs}
   fi
 
   # Apply machine configs
