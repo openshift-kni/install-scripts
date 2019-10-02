@@ -1,7 +1,9 @@
 #!/bin/bash
 
 set -ex
-source ../common/logging.sh
+if [[ -e ../common/logging.sh ]];
+    source ../common/logging.sh
+fi
 
 OLD_CNV_VERSION="${OLD_CNV_VERSION:-2.0.0}"
 CNV_VERSION="${CNV_VERSION:-2.1.0}"

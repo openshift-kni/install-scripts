@@ -1,7 +1,10 @@
 #!/bin/bash
 
 set -ex
-source ../common/logging.sh
+
+if [[ -e ../common/logging.sh ]]; then
+    source ../common/logging.sh
+fi
 
 export KUBECONFIG=${KUBECONFIG:-../OpenShift/ocp/auth/kubeconfig}
 

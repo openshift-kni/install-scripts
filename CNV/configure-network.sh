@@ -1,7 +1,10 @@
 #!/bin/bash
 
 set -ex
-source ../common/logging.sh
+
+if [[ -e ../common/logging.sh ]]; then
+    source ../common/logging.sh
+fi
 
 MACHINE_CIDR=$(grep 'machineCIDR' ../OpenShift/install-config.yaml | sed 's/\(.*\): *\(.*\)/\2/')
 BRIDGE_NAME=brext
