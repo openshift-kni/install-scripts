@@ -1,7 +1,10 @@
 #!/bin/bash
 
 set -ex
-source ../common/logging.sh
+
+if [[ -e ../common/logging.sh ]]; then
+  source ../common/logging.sh
+fi
 
 ocs_version="${ocs_version:-release-4.2}"
 NAMESPACE="openshift-storage"
