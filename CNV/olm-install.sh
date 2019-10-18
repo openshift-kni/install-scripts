@@ -33,7 +33,7 @@ SUBSCRIPTION_APPROVAL="${SUBSCRIPTION_APPROVAL:-Manual}"
 export TARGET_NAMESPACE
 
 
-if [[ ${CUSTOM_APPREGISTRY} ]]; then
+if  ${CUSTOM_APPREGISTRY} ; then
 
   QUAY_TOKEN="${QUAY_TOKEN:-}"
 
@@ -101,7 +101,7 @@ fi
 # 2. Create OperatorGroup defining namespaces that OLM will be monitoring  
 echo ">>> Creating operatorgroup ${TARGET_NAMESPACE}-group"
 if ! `oc get operatorgroup ${TARGET_NAMESPACE}-group -n ${TARGET_NAMESPACE} &>/dev/null` ; then
-  if [[ ${NAMESPACED_SUBSCR} ]]; then
+  if ${NAMESPACED_SUBSCR} ; then
 
     echo ">>> Creating OperatorGroup for target namespaces ${TARGET_NAMESPACE}"
     cat <<EOF | oc create -f - || true
