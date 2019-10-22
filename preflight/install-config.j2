@@ -20,7 +20,7 @@ platform:
     dnsVIP: {{ hostvars[host]['ns1vip'] }}
     hosts:
 {% endfor %}
-{% for host in groups['masters'] %}
+{% for host in groups['masters']|sort %}
       - name: {{ hostvars[host]['name'] }}
         role: {{ hostvars[host]['role'] }}
         bmc:
